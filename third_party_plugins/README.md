@@ -4,16 +4,16 @@ This folder contains the compiled versions of the following modules, which are r
 
 ## Waypoint Trajectory Planning
 
-Entry point: GeoCoordinates.exe
-Source code: https://github.com/CoFly-Project/Waypoint-Trajectory-Planning/tree/main/Project_code
+- Entry point: GeoCoordinates.exe
+- Source code: https://github.com/CoFly-Project/Waypoint-Trajectory-Planning/tree/main/Project_code
 
 ## Plugin 2
 
-Description:
-Source code:
+- Description:
+- Source code:
 
 ## Plugin 3
 
-Description:
-Source code:
+- Description:
+- Source code:
 
