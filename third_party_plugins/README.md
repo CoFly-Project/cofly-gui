@@ -2,10 +2,10 @@
 
 This folder contains the compiled versions of the following modules, which are required to establish communications with the drone, perform path planning, image stitching, and photoindex calculations:
 
-## Plugin 1
+## Waypoint Trajectory Planning
 
-Description:
-Source code:
+Entry point: GeoCoordinates.exe
+Source code: https://github.com/CoFly-Project/Waypoint-Trajectory-Planning/tree/main/Project_code
 
 ## Plugin 2
 
