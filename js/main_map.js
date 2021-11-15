@@ -1,8 +1,11 @@
-//var map = L.mapbox.map('map').setView([38.023349, 23.744271], 14);
-var accessToken = "pk.eyJ1IjoiY29mbHliYiIsImEiOiJja2sybjBtcjExMzNwMm5vNTd6dDFoNTVsIn0.MZttxhCpctPxyPZw7KC16Q";
-L.mapbox.accessToken = accessToken;
-var map = L.mapbox.map("map").setView([40.595409521631176,23.039895966293173], 13);
-
+//var map = L.mapbox.map('map').setView([23.744271,38.023349], 14);
+//var accessToken = "pk.eyJ1IjoiY29mbHliYiIsImEiOiJja2sybjBtcjExMzNwMm5vNTd6dDFoNTVsIn0.MZttxhCpctPxyPZw7KC16Q";
+//L.mapbox.accessToken = accessToken;
+//var map = L.mapbox.map("map").setView([40.595409521631176,23.039895966293173], 13);
+L.mapbox.accessToken = 'pk.eyJ1IjoiZWdnbGV6b3NrIiwiYSI6ImNra2Z0NndyczBsYTUydm43Yjh3bDRvMHUifQ.cvUwSVInY69HPVpp1YdVIA';
+var map = L.mapbox.map('map')
+    .setView([40.57421474094349, 22.99714166131528], 18)
+    .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/satellite-v9'));
 
 //var map = L.mapbox.map('map').setView([40.595409521631176,23.039895966293173], 18);
 //var map = L.mapbox.map('map').setView([40.595409521631176,23.039895966293173], 18);
@@ -11,6 +14,7 @@ var map = L.mapbox.map("map").setView([40.595409521631176,23.039895966293173], 1
 
 
 // Add layers to the map
+/*
 L.control.layers({
     'Satellite Map': L.mapbox.tileLayer('mapbox.satellite', {
         detectRetina: true
@@ -19,7 +23,7 @@ L.control.layers({
         detectRetina: true
     })
 }).addTo(map);
-
+*/
 
 
 var featureGroup = L.featureGroup().addTo(map);
@@ -34,6 +38,7 @@ map.on('draw:created', function(e) {
 
     // Each time a feaute is created, it's added to the over arching feature group
     featureGroup.addLayer(e.layer);
+    /*
     var geojsonArea = require('@mapbox/geojson-area');
 
     var data = featureGroup.toGeoJSON();
@@ -41,7 +46,7 @@ map.on('draw:created', function(e) {
     console.log(area);
     var acres = area * 0.00024711;
     jQuery('#acres_num').text(acres.toFixed(2) + ' Acres');
-
+*/
 
 });
 //C:\Users\keglezos\Desktop\out_of\Resulted_Vis_image_representations\14-09-2020
@@ -77,7 +82,7 @@ document.getElementById('delete').onclick = function(e) {
 // SAVE PROJECT / CREATE FILE
 jQuery('div#save_button').click(function() {
 
-    if(jQuery('.leaflet-objects-pane .leaflet-overlay-pane svg').length == 0){
+    if(jQuery('.leaflet-pane.leaflet-overlay-pane svg').length == 0){
         //console.log('teas');
         jQuery('div#pop_up_container').fadeIn(); 
     }
@@ -105,7 +110,7 @@ jQuery('div#save_button').click(function() {
     if (jQuery('input#plan_name').val() == "" || data == 'undefined') {
         
         jQuery('div#pop_up_container').fadeIn();
-        //alert('not plan name found');
+        alert('not plan name found OR DATA');
     } else {
 
         /*/ LOAD PROJECT
@@ -144,16 +149,35 @@ jQuery('div#save_button').click(function() {
 
         });
 
-        // Create Dir in order to save RGB VLS outoups of missions
-        fs.mkdir(running_on + '/projects/' + plan_name + '/rgb_vls_results/', function() {
+        // Create Dir in order to save Stiched Images
+        fs.mkdir(running_on + '/projects/' + plan_name + '/stiched_images/', function(err) {
+
+            if(err){
+                console.log('ERROR CREATING SUBDIR');
+                console.log(err);
+            }else{
+                //
+            }
+        
         });
 
-        // Create Dir in order to save Stiched Images
-        fs.mkdir(running_on + '/projects/' + plan_name + '/stiched_images/', function() {
-                });
+       
+        var dir = running_on + '/projects/' + plan_name + '/stiched_images/';
+        var dir_two = running_on + '/projects/' + plan_name + '/project_images/';
+
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+
+        if (!fs.existsSync(dir_two)){
+            fs.mkdirSync(dir_two);
+        }
+
+        
 
         localStorage.setItem("LoadProject", jQuery('input#plan_name').val());
         window.location = "./load_project.html";
+        
 
         // SAVE PROJECT
 

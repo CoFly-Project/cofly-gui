@@ -168,12 +168,14 @@ div#load_this_project div {
     </div>
     <!-- <script src="js/main_script.js"></script> -->
         <script>
-        var accessToken = "pk.eyJ1IjoiY29mbHliYiIsImEiOiJja2sybjBtcjExMzNwMm5vNTd6dDFoNTVsIn0.MZttxhCpctPxyPZw7KC16Q";
-        L.mapbox.accessToken = accessToken;
-        var map = L.mapbox.map('map')
-            .setView([38.6008630095356,24.187002848625298], 7);
+
+            L.mapbox.accessToken = 'pk.eyJ1IjoiZWdnbGV6b3NrIiwiYSI6ImNra2Z0NndyczBsYTUydm43Yjh3bDRvMHUifQ.cvUwSVInY69HPVpp1YdVIA';
+var map = L.mapbox.map('map')
+    .setView([38.6008630095356,24.187002848625298], 7)
+    .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/satellite-v9'));
 
         // Add layers to the map
+        /*
         L.control.layers({
             'Satellite Map': L.mapbox.tileLayer('mapbox.satellite', {
                 detectRetina: true
@@ -182,6 +184,7 @@ div#load_this_project div {
                 detectRetina: true
             })
         }).addTo(map);
+        */
 
         //var featureGroup = L.featureGroup().addTo(map);
 

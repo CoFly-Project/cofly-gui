@@ -12,8 +12,8 @@
   "author": "egglezos",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^5.0.12",
-    "electron-builder": "^22.8.0",
+    "electron": "^5.0.13",
+    "electron-builder": "^22.14.3",
     "electron-packager": "^15.1.0"
   },
   "dependencies": {
@@ -28,12 +28,12 @@
     "geojson-polygon-center": "0.0.0",
     "grunt-contrib-imagemin": "^4.0.0",
     "jimp": "^0.16.1",
-    "mqtt": "^4.1.0",
+    "mqtt": "^4.2.8",
     "multer": "^1.4.2",
     "ncp": "^2.0.0",
     "request": "^2.88.0",
     "rimraf": "^3.0.2",
-    "sharp": "^0.26.0",
+    "sharp": "^0.26.3",
     "tiff-to-png": "^2.0.2",
     "uuid": "^3.3.3",
     "zip-a-folder": "0.0.9",

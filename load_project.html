@@ -39,8 +39,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     
     <script src='js/lib/leaflet.ajax.min.js'></script>
+    <script src='./js/lib/leaflet.snogylop.js'></script>
     <link rel="stylesheet" href="css/timeline.css">
     <link rel="stylesheet" href="css/datetimepicker.css">
+
+
+
     
     
     <style type="text/css">
@@ -198,7 +202,7 @@ div#export_project {
 </head>
 
 <body class="">
-
+    <div id="toast"></div>
     <div id="stiching_progress">
 
         <svg version="1.1" id="L3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
@@ -272,6 +276,10 @@ div#stiching_progress {
                 <a class="navbar-brand pt-0" href="./index.html">
                     <img src="img/coFLY_logo.png" class="navbar-brand-img" alt="...">
                     <!-- <input type="file" webkitdirectory directory/>-->
+                    <span id="communication_server" class="status offline"></span>
+<!--<span class="status invisible"></span>
+<span class="status idle"></span>
+<span class="status offline"></span>-->
                 </a>
     
                 <!-- Collapse -->
@@ -347,6 +355,26 @@ div#stiching_progress {
                                 </div>
                             <input type="range" class="input-range--custom gimbal_pitch" min="0" max="360">
                             <input type="text" id="gimbal_pitch" name="name" class="input_slider_shower" minlength="4" maxlength="8" size="1">
+                            </li>
+
+
+                            <li class="nav-item slider_inside_li">
+                                <div class="input_holder part_of_ul">
+                                    <label>Host</label>
+                                    <input id="mqtt_host" class="input_main">
+                                </div>
+                            </li>
+
+                            <li class="nav-item slider_inside_li">
+                                <div class="input_holder part_of_ul">
+                                    <label>Port</label>
+                                    <input id="mqtt_port" class="input_main">
+                                </div>
+                            </li>
+
+                            <li>
+                                <div id="server_connection" class="button_full">SAVE &amp; RELOAD</div>
+                                
                             </li>
 
     
@@ -590,8 +618,14 @@ jQuery("div#timeline_div").load("scan_timeline.html");
                                
                             </section>
                             <section class="future"  hidden="" aria-hidden="true">
+                                
                                 <h2>Gallery of Missions</h2>
                                 <p>..</p>
+
+
+
+
+
                             </section>
                             <section class="future" style="top: 154px; display: none;" hidden="" aria-hidden="true">
                                 <h2>DEMO PROPOSES BUTTONS</h2>
@@ -613,13 +647,13 @@ jQuery("div#timeline_div").load("scan_timeline.html");
 
             <div id="photo_picker_receiver_start"><div id="image_container">  
 
-                <div class="button_full_rgb_vls" index="ExG_stiched">ExG</div>
-                <div class="button_full_rgb_vls" index="ExG-ExR_stiched">ExG-ExR</div>
-                <div class="button_full_rgb_vls" index="GLI_stiched">GLI</div>
-                <div class="button_full_rgb_vls" index="NGBDI_stiched">NGBDI</div>
-                <div class="button_full_rgb_vls" index="NGRDI_stiched">NGRDI</div>
-                <div class="button_full_rgb_vls" index="SAVI-GREEN_stiched">SAVI-GREEN</div>
-                <div class="button_full_rgb_vls" index="VARI_stiched">VARI</div>
+                <div style="display:none;"class="button_full_rgb_vls" index="ExG_stiched">ExG</div>
+                <div style="display:none;" class="button_full_rgb_vls" index="ExG-ExR_stiched">ExG-ExR</div>
+                <div class="button_full_rgb_vls" index="gli.png">GLI</div> 
+                <div class="button_full_rgb_vls" index="ngbdi.png">NGBDI</div> 
+                <div class="button_full_rgb_vls" index="ngrdi.png">NGRDI</div> 
+                <div style="display:none;" class="button_full_rgb_vls" index="SAVI-GREEN_stiched">SAVI-GREEN</div>
+                <div class="button_full_rgb_vls" index="vari.png">VARI</div> 
 
             </div>
             
@@ -649,6 +683,32 @@ jQuery("div#timeline_div").load("scan_timeline.html");
             
             </div>
         <div id="lightbox"><div class="close_image_shower">X</div></div>
+
+            <!-- PROCESS LOADER -->
+
+            <div id="Loader_Proccess_PopUp" class="card">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; padding: 60px 0;">
+                  <div class="card__circle">
+                    <div class="folder">
+                      <div class="folder__bg"><img width="100%" src="https://cdn.dribbble.com/users/27903/screenshots/3465543/loader2.gif"></div>
+                      <div style="display:none;" class="folder__page3"></div>
+                      <div style="display:none;" class="folder__page2"></div>
+                      <div style="display:none;" class="folder__page1"></div>
+                      <div style="display:none;" class="folder__front"></div>
+                    </div>
+                  </div>
+                  <div class="card-information">
+                    <div class="card-information__title">Processing...</div>
+                    <div class="card-information__text">Please wait while we set things up for you!</div>
+                  </div>
+                </div>
+              </div>
+
+            <!-- END PROCESS LOADER -->
+
+
+
+
         <div id="pop_up_container">
     <div class="pop_up_content">
         <p>Please fill out the form, also do not forget create your polygon in order to specify area field </p><div class="button_all_ok">OK</div></div></div>

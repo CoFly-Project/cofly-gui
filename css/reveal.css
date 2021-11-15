@@ -1596,3 +1596,7 @@ body {
 
 .zoomed .reveal .roll span:after {
   visibility: hidden; }
+
+  aside.controls {
+    color: #fec840 !important;
+}

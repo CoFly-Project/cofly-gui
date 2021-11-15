@@ -3,6 +3,7 @@ bower_components
 node_modules
 dist
 bin
+third_party_plugins
 
 #files
 *.tgz
