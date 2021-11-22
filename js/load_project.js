@@ -606,12 +606,12 @@ app.use(express.urlencoded({limit: '50mb'}));
         // RUN EXCECUTABLE HERE
 
     var child = require('child_process').execFile;
-    var final_path = path.resolve(__dirname+'/third_party_plugins/RGB_VLS', 'index_calculation.exe');
+    var final_path = path.resolve(__dirname+'/third_party_plugins/RGB_VLS', 'idx_calculation.exe');
     console.log(final_path);
     var executablePath = final_path;
     var running_on = path.resolve(__dirname);
     // Path of stiched image & path of project 
-    var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/odm_orthophoto/odm_orthophoto.tif", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/"];
+    var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/odm_orthophoto/odm_orthophoto.tif", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/"+localStorage.getItem("LoadProject").trim()];
     //var parameters = ["./projects/"+localStorage.getItem("LoadProject").trim()+"/map_data.geojson"];
         console.log(parameters)
     child(executablePath,parameters, function(err, data) {
@@ -659,18 +659,20 @@ app.use(express.urlencoded({limit: '50mb'}));
                     // RUN EXCECUTABLE HERE
 
                 var child = require('child_process').execFile;
-                var final_path = path.resolve(__dirname+'/third_party_plugins/RGB_CENTERS', 'centers_detection.exe');
+                var final_path = path.resolve(__dirname+'/third_party_plugins/RGB_CENTERS', 'centers.exe');
                 console.log(final_path);
                 var executablePath = final_path;
                 var running_on = path.resolve(__dirname);
-                // Path of stiched image & path of project 
-                var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/odm_orthophoto/odm_orthophoto.tif", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/"+localStorage.getItem("LoadProject").trim()+'/',running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/images/"];
+                // The new parameters are Calculated Tifs from Index Calculation + Txt file with photo names from Docker Stiching 
+                //var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/odm_orthophoto/odm_orthophoto.tif", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/"+localStorage.getItem("LoadProject").trim()+'/project/',running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/images/"];
+                var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/"+localStorage.getItem("LoadProject").trim()+"/project/", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/img_list.txt"];
                 //var parameters = ["./projects/"+localStorage.getItem("LoadProject").trim()+"/map_data.geojson"];
                     console.log(parameters)
                 child(executablePath,parameters, function(err, data) {
 
                     if(err){
                         alert('ERROR ON CALCULATION CENTERS OF PROBLEMATIC AREAS');
+                        console.log(err);
 
                         toast({
                             title: "Error, on centers calculation",
@@ -1406,7 +1408,7 @@ app.use(express.urlencoded({limit: '50mb'}));
                 //ncp.limit = 16;
 
                 // images source
-                var source = "C:/Users/keglezos/Desktop/images";
+                var source = "C:/Users/ENGLEZOS/Desktop/images";
                 //var source = localStorage.getItem("Save_Image_Path");
 
                 const path = require('path');
@@ -1565,12 +1567,12 @@ app.use(express.urlencoded({limit: '50mb'}));
         // RUN EXCECUTABLE HERE
 
     var child = require('child_process').execFile;
-    var final_path = path.resolve(__dirname+'/third_party_plugins/RGB_VLS', 'index_calculation.exe');
+    var final_path = path.resolve(__dirname+'/third_party_plugins/RGB_VLS', 'idx_calculation.exe');
     console.log(final_path);
     var executablePath = final_path;
     var running_on = path.resolve(__dirname);
     // Path of stiched image & path of project 
-    var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/odm_orthophoto/odm_orthophoto.tif", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/"];
+    var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/docker_stitching/project/odm_orthophoto/odm_orthophoto.tif", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/"+localStorage.getItem("LoadProject").trim()];
     //var parameters = ["./projects/"+localStorage.getItem("LoadProject").trim()+"/map_data.geojson"];
         console.log(parameters)
     child(executablePath,parameters, function(err, data) {
@@ -1598,17 +1600,28 @@ app.use(express.urlencoded({limit: '50mb'}));
     // Demo prosposes json files reading TO BE REMOVED
     Draw_Centers_OnMap();
     function Draw_Centers_OnMap(){
+
+        try {
+
         const pathsb = require('path');
         var running_on = pathsb.resolve(__dirname);
-        var path_of_json = running_on+'/projects/'+project_path.replace(" ", "")+'/'+project_path.replace(" ", "")+'/';
+        var path_of_json = running_on+'/projects/'+project_path.replace(" ", "")+'/'+project_path.replace(" ", "")+'/project/';
+        
+        // check if files are created and draw them otherwise return and do nothing
+        if(!fs.existsSync(path_of_json + '/GLI.json')) {
+            console.log("Centers has not excecuted so far");
+            return
+          }
+            
+        
         //console.log(path_of_json);
         //var exg_centers = fs.readFileSync(path_of_json + '/ExG_centers.json', 'utf8');
         //var exg_exr_centers = fs.readFileSync(path_of_json + '/ExG-ExR_centers.json', 'utf8');
-        var gli_centers = fs.readFileSync(path_of_json + '/gli.json', 'utf8');
-        var ngbdi_centers = fs.readFileSync(path_of_json + '/ngbdi.json', 'utf8');
-        var ngrdi_centers = fs.readFileSync(path_of_json + '/ngrdi.json', 'utf8');
+        var gli_centers = fs.readFileSync(path_of_json + '/GLI.json', 'utf8');
+        var ngbdi_centers = fs.readFileSync(path_of_json + '/NGBDI.json', 'utf8');
+        var ngrdi_centers = fs.readFileSync(path_of_json + '/NGRDI.json', 'utf8');
         //var savi_green_centers = fs.readFileSync(path_of_json + '/SAVI-GREEN_centers.json', 'utf8');
-        var vari_centers = fs.readFileSync(path_of_json + '/vari.json', 'utf8');
+        var vari_centers = fs.readFileSync(path_of_json + '/VARI.json', 'utf8');
 
         //var exg_centers_json = JSON.parse(exg_centers);
         //var exg_exr_centers_json = JSON.parse(exg_exr_centers);
@@ -1623,8 +1636,8 @@ app.use(express.urlencoded({limit: '50mb'}));
         /* CREATING MARKERS FOR GLI CENTERS */
 
         for(var item in gli_centers_json) {
-            var lat = gli_centers_json[item]["Lat"];
-            var lon = gli_centers_json[item]["Lon"];
+            var lat = gli_centers_json[item]["Lon"];
+            var lon = gli_centers_json[item]["Lat"];
             var img_near = gli_centers_json[item]["Nearest_image"];
             
             marker = new L.marker([lon,lat],{
@@ -1681,17 +1694,14 @@ app.use(express.urlencoded({limit: '50mb'}));
   
             }
 
-        //console.log(exg_centers_json.center[0]["Lat"] + "KAI " + exg_centers_json.center[1]["Lon"]);
-        /*
-        var planes = [
-            [gli_centers_json.center[2]["name_image"],gli_centers_json.center[0]["Lat"],gli_centers_json.center[1]["Lon"]],
-            [ngbdi_centers_json.center[2]["name_image"],ngbdi_centers_json.center[0]["Lat"],ngbdi_centers_json.center[1]["Lon"]],
-            [ngrdi_centers_json.center[2]["name_image"],ngrdi_centers_json.center[0]["Lat"],ngrdi_centers_json.center[1]["Lon"]],
-            [vari_centers_json.center[2]["name_image"],vari_centers_json.center[0]["Lat"],vari_centers_json.center[1]["Lon"]]
-            ];
-        */
 
-        //map.panTo(new L.LatLng(latitude, longitude));
+           
+          } catch (error) {
+            console.error(error);
+            
+            console.log('There is no calculated problemati area centers on map');
+          }
+
 
     }
 
@@ -1766,14 +1776,14 @@ Lower right corner: 40.57197854729044, 22.99985538092048
         if(load_project_indeces_file() != 0){
 
             //console.log(running_on + '/projects/' +project_path.replace(" ", "") + '/rgb_vls_results/Resulted_Vis_image_representations/');
-        fs.readdir(running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/', (err, files) => {
+        fs.readdir(running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/', (err, files) => {
 
             
 
             files.forEach(file => {
             
                 console.log(file);    
-                if(file == "gli.png"){
+                if(file == "GLI.png"){
                     jQuery('ul.navbar-nav.mb-md-3.collapsed.project_gallery_render').append('<div id="" class="button_full date_indeces">Open Indeces Bar</div>');
                     jQuery('ul.navbar-nav.mb-md-3.collapsed.project_gallery_render').append('<div id="remove_vls_from_map" class="button_full ">Hide from map</div>');
                     
@@ -1818,7 +1828,7 @@ Lower right corner: 40.57197854729044, 22.99985538092048
         var running_on = path.resolve(__dirname);
         
         var img_name = jQuery(this).attr('index');
-        var imageUrl = running_on + '/projects/' + project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/'+img_name;
+        var imageUrl = running_on + '/projects/' + project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/'+img_name;
         
         cimageBounds = L.bounds([[40.573994502284826, 22.997514351202266],[40.57201471549072, 23.00005946100994]]);
         //console.log(cimageBounds.getCenter());
@@ -2029,6 +2039,5 @@ Lower right corner: 40.57197854729044, 22.99985538092048
     });
 
     */
-   
 
 });
