@@ -72,11 +72,16 @@ jQuery(document).ready(function() {
             
             // Camera Topic
             if(topic.toString().indexOf("camera/dji.phantom.4.pro.hawk.1") != -1){
-                console.log('REA CAMERA');
+                //console.log('REA CAMERA');
                 if (can_save_image){
     
                 //console.log('Receive Camera');
                 camera_topic = JSON.parse(message);
+                console.log(camera_topic);
+                if(camera_topic.image == null){
+                    console.log('Null Photo');
+                    return
+                }
                 var base64Data = camera_topic.image.replace(/^data:image\/png;base64,/, "");
                 const uuidv4 = require('uuid/v4'); // I chose v4 ‒ you can select others
                 var filename = uuidv4(); // '110ec58a-a0f2-4ac4-8393-c866d813b8d1'

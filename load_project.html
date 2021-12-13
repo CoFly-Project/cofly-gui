@@ -617,10 +617,60 @@ jQuery("div#timeline_div").load("scan_timeline.html");
                                 
                                
                             </section>
-                            <section class="future"  hidden="" aria-hidden="true">
+                            <section class="future" style="top: 0px;display: block;min-height: 100vh !important;min-width: 100vw !important;" hidden="" aria-hidden="true">
                                 
-                                <h2>Gallery of Missions</h2>
-                                <p>..</p>
+                               <!-- Test Intergration -->
+                               <link rel="stylesheet" href="css/gallery_style.css">
+                               <div  class="viewport">
+                                <div class="canvas">
+                                    
+                                    <div class="selected"></div>
+                                </div>
+                            </div>
+                            <div class="map-container">
+                                <div class="map">
+                                   
+                                </div>
+                            </div>
+                            <button class="back" id="back">back</button>
+                            <div class="focus-container">
+                                <button style=" margin-top: 1.9%; "class="focus" aria-labelledby="ally-zoom">
+                                    <spa class="visuallyhidden" id="ally-zoom">expand image</spa>
+                                </button>
+                            </div>
+                            <div class="zoom-container">
+                                <div class="zoom">
+                                    <div class="zoom__input">
+                                        <input type="range" id="zoom" name="zoom" min="0.375" max=".75" value=".375" step="0.041666666666666664" orient="vertical" />
+                                        <div class="lines">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                        <label for="zoom" class="">zoom</label>
+                                    </div>
+                                    <div class="datalist">
+                                        <div>[.750]</div>
+                                        <div>[.562]</div>
+                                        <div>[.375]</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mas">
+                                <div class="v"></div>
+                                <div class="h"></div>
+                                <div class="r"></div>
+                            </div>
+
+                            <script  src="js/gallery.js"></script>
+                               <!-- End of test integration gallery -->
 
 
 
@@ -714,7 +764,7 @@ jQuery("div#timeline_div").load("scan_timeline.html");
         <p>Please fill out the form, also do not forget create your polygon in order to specify area field </p><div class="button_all_ok">OK</div></div></div>
         <!--<div class="loader_calculation"><img src="img/new_simple_logo.png"></div>-->
         <!-- Navbar -->
-        <div class="Settings_Menu_Nav"><img id="button_trig_menu" src="img/button_side_menu.png">
+        <div class="Settings_Menu_Nav" style="display:none;"><img id="button_trig_menu" src="img/button_side_menu.png">
 <ul style="display: none;" class="map_tools">
 
 <li><i class="fas fa-mouse-pointer"></i><span>Select elements</span></li><li><i class="fas fa-draw-polygon"></i><span>Draw polygon</span></li><li><i class="fas fa-asterisk"></i><span>Add annotation</span></li><li><i class="fas fa-edit"></i><span>Edit elements</span></li><li><i class="fas fa-trash-alt"></i><span>Delete elements</span></li><li><i class="fas fa-download"></i><span>Export map</span></li>
