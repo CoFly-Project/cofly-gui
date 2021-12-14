@@ -65,7 +65,7 @@ jQuery(document).ready(function() {
         client.on('disconnect', function () {
             console.log('MQTT DISCONNECTED');
         })
-    
+        var image_id =0;
         client.on('message', function (topic, message) {
             // message is Buffer
             console.log(topic)
@@ -74,7 +74,7 @@ jQuery(document).ready(function() {
             if(topic.toString().indexOf("camera/dji.phantom.4.pro.hawk.1") != -1){
                 //console.log('REA CAMERA');
                 if (can_save_image){
-    
+                    image_id++;
                 //console.log('Receive Camera');
                 camera_topic = JSON.parse(message);
                 console.log(camera_topic);
@@ -84,7 +84,10 @@ jQuery(document).ready(function() {
                 }
                 var base64Data = camera_topic.image.replace(/^data:image\/png;base64,/, "");
                 const uuidv4 = require('uuid/v4'); // I chose v4 ‒ you can select others
-                var filename = uuidv4(); // '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
+                //var filename = uuidv4(); // '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
+                var filename = 'ID_'+image_id+'_UAV_dji.phantom.4.pro.hawk.1_[Lat='+camera_topic.latitude+',Lon='+camera_topic.longitude+',Alt='+camera_topic.altitude+']_DATE_'+camera_topic.timestamp;
+                // 'ID_'+image_id'+_UAV_dji.phantom.4.pro.hawk.1_[Lat='+camera_topic.latitude+',Lon='+camera_topic.longitude+',Alt='+camera_topic.altitude+']_DATE_'+timestamp
+                // ID_0_UAV_dji.phantom.4.pro.hawk.1_[Lat=40.573284372317666,Lon=22.998578042988207,Alt=21.200000762939453]_DATE_24_07_2020_20_35_4467f3f951-7e7f-4757-8025-8e6855981a66
         
                 require("fs").writeFile(localStorage.getItem('Save_Image_Path') +'/' + filename + '.jpg', base64Data, 'base64', function(err) {
                 
@@ -708,7 +711,7 @@ app.use(express.urlencoded({limit: '50mb'}));
                         duration: 5000
                       });
                     //alert('Now Draw Photo Indices');
-                    
+                    Draw_Centers_OnMap();
 
                 });
     }
@@ -1413,8 +1416,8 @@ app.use(express.urlencoded({limit: '50mb'}));
                 //ncp.limit = 16;
 
                 // images source
-                var source = "C:/Users/ENGLEZOS/Desktop/images";
-                //var source = localStorage.getItem("Save_Image_Path");
+                //var source = "C:/Users/ENGLEZOS/Desktop/images";
+                var source = localStorage.getItem("Save_Image_Path");
 
                 const path = require('path');
                 var running_on = path.resolve(__dirname);
@@ -1593,7 +1596,7 @@ app.use(express.urlencoded({limit: '50mb'}));
         });
 
         // Read JSON Files 
-        draw_photo_indices();
+        convert_indeces_to_png();
         rgb_centers_area();
         //alert('Now Draw Photo Indices');
 
@@ -1601,6 +1604,63 @@ app.use(express.urlencoded({limit: '50mb'}));
 
     }
     
+    function convert_indeces_to_png(){
+        // CONVERT STICHED IMAGE FROM TIFF TO PNG
+
+        const path = require('path');
+        var running_on = path.resolve(__dirname);
+        //alert( running_on +'/'+ project_path.replace(" ", ""));
+        
+        const sharp = require('sharp');
+        
+        const main = async () => {
+            if (process.argv.length < 4) {
+                console.log('arguments: srcFile dstFile');
+                console.log('supports reading JPEG, PNG, WebP, TIFF, GIF and SVG images.');
+                console.log('output images can be in JPEG, PNG, WebP and TIFF formats.');
+                return;
+            }
+
+            const path = require('path');
+            var running_on = path.resolve(__dirname);
+
+            const srcFileGLI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/GLI.tif';
+            const dstFileGLI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/GLI.png';
+
+            const srcFileNGBDI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/NGBDI.tif';
+            const dstFileNGBDI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/NGBDI.png';
+
+            const srcFileNGRDI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/NGRDI.tif';
+            const dstFileNGRDI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/NGRDI.png';
+
+            const srcFileVARI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/VARI.tif';
+            const dstFileVARI = running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/VARI.png';
+            try {
+
+                toast({
+                    title: "Converting...",
+                    message: "Convert Indeces TIFS to PNG",
+                    type: "success",
+                    duration: 5000
+                  });
+
+
+                const info_GLI = await sharp(srcFileGLI).toFile(dstFileGLI);
+                const info_NGBDI = await sharp(srcFileNGBDI).toFile(dstFileNGBDI);
+                const info_NGRDI = await sharp(srcFileNGRDI).toFile(dstFileNGRDI);
+                const info_VARI = await sharp(srcFileVARI).toFile(dstFileVARI);
+                //console.log(info);
+
+                draw_photo_indices();
+
+            } catch (err) {
+                
+
+                console.error(err);
+            }
+        };
+        main();
+    }
 
     // Demo prosposes json files reading TO BE REMOVED
     Draw_Centers_OnMap();
@@ -1762,8 +1822,6 @@ Lower right corner: 40.57197854729044, 22.99985538092048
 
     draw_photo_indices();
     // Function That Draws Photo Indices 
-
-
     function draw_photo_indices(){
 
         // Delete Old
@@ -1834,7 +1892,9 @@ Lower right corner: 40.57197854729044, 22.99985538092048
         
         var img_name = jQuery(this).attr('index');
         var imageUrl = running_on + '/projects/' + project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/'+img_name;
-        
+
+
+        // MUST READ FROM FILE BOUND BOX
         cimageBounds = L.bounds([[40.573994502284826, 22.997514351202266],[40.57201471549072, 23.00005946100994]]);
         //console.log(cimageBounds.getCenter());
         imageBounds = [cimageBounds.getCenter(), [40.573994502284826, 22.997514351202266],[40.57201471549072, 23.00005946100994]];

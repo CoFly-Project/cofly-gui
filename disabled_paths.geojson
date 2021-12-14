@@ -1,1 +1,1 @@
-null
+{"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Point", "coordinates": [22.998821, 40.573357]}}, {"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[22.998601, 40.573218], [22.998049, 40.572839], [22.998987, 40.572855], [22.998601, 40.573218]]]}}]}
