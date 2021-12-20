@@ -1983,3 +1983,11 @@ div#remove_vls_from_map {
   color: rgba(0, 0, 0, 0.3);
   cursor: pointer;
 }
+
+.stiched_image {
+    z-index: 2 !important;
+}
+
+.calculated_rgb_vls_index {
+  z-index: 3 !important;
+}
