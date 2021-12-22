@@ -1749,92 +1749,6 @@ app.use(express.urlencoded({limit: '50mb'}));
             return
           }
          
-          if(name_of_index == "GLI"){
-            //alert('dfsdfsdf');
-            var gli_centers = fs.readFileSync(path_of_json + '/GLI.json', 'utf8');
-            console.log(gli_centers);
-            var gli_centers_json = JSON.parse(gli_centers);
-
-                    /* CREATING MARKERS FOR GLI CENTERS */
-
-        for(var item in gli_centers_json) {
-            var lat = gli_centers_json[item]["Lat"];
-            var lon = gli_centers_json[item]["Lon"];
-            var img_near = gli_centers_json[item]["Nearest_image"];
-            
-            marker = new L.marker([lon,lat],{
-                title: 'Problem Area',
-                icon: alert_indeces
-            }).bindPopup('<img src="'+running_on+'/projects/'+project_path.replace(" ", "")+"/docker_stitching/project/images/"+img_near+'"><div class="remove_this">Remove</div>').addTo(map);
-                //console.log(lat,lon);
-
-          }
-
-
-         }else if(name_of_index == "NGBDI"){
-            //alert('NGBDI');
-            var ngbdi_centers = fs.readFileSync(path_of_json + '/NGBDI.json', 'utf8');
-            var ngbdi_centers_json = JSON.parse(ngbdi_centers);
-
-            
-        /* CREATING MARKERS FOR NGBDI CENTERS */
-        for(var item in ngbdi_centers_json) {
-            var lat = ngbdi_centers_json[item]["Lat"];
-            var lon = ngbdi_centers_json[item]["Lon"];
-            var img_near = ngbdi_centers_json[item]["Nearest_image"];
-            
-            marker = new L.marker([lon,lat],{
-                title: 'Problem Area',
-                icon: alert_indeces
-            })
-				.bindPopup('<img src="'+running_on+'/projects/'+project_path.replace(" ", "")+"/docker_stitching/project/images/"+img_near+'"><div class="remove_this">Remove</div>')
-				.addTo(map);
-
-          }
-
-
-
-         }else if(name_of_index == "NGRDI"){
-
-        var ngrdi_centers = fs.readFileSync(path_of_json + '/NGRDI.json', 'utf8');     
-        var ngrdi_centers_json = JSON.parse(ngrdi_centers);
-
-         /* CREATING MARKERS FOR ngrdi_centers_json CENTERS */
-         for(var item in ngrdi_centers_json) {
-            var lat = ngrdi_centers_json[item]["Lat"];
-            var lon = ngrdi_centers_json[item]["Lon"];
-            var img_near = ngrdi_centers_json[item]["Nearest_image"];
-            
-            marker = new L.marker([lon,lat],{
-                title: 'Problem Area',
-                icon: alert_indeces
-            })
-				.bindPopup('<img src="'+running_on+'/projects/'+project_path.replace(" ", "")+"/docker_stitching/project/images/"+img_near+'"><div class="remove_this">Remove</div>')
-				.addTo(map);
-
-          }   
-
-
-         }else if(name_of_index == "VARI"){
-
-            var vari_centers = fs.readFileSync(path_of_json + '/VARI.json', 'utf8');
-            var vari_centers_json = JSON.parse(vari_centers);
-    
-              /* CREATING MARKERS FOR vari CENTERS */
-              for(var item in vari_centers_json) {
-                  var lat = vari_centers_json[item]["Lat"];
-                  var lon = vari_centers_json[item]["Lon"];
-                  var img_near = vari_centers_json[item]["Nearest_image"];
-                  
-                  marker = new L.marker([lon,lat],{
-                      title: 'Problem Area',
-                      icon: alert_indeces
-                  })
-                      .bindPopup('<img src="'+running_on+'/projects/'+project_path.replace(" ", "")+"/docker_stitching/project/images/"+img_near+'"><div class="remove_this">Remove</div>')
-                      .addTo(map);
-      
-                }
-         }
 
           } catch (error) {
             console.error(error);
@@ -1845,19 +1759,102 @@ app.use(express.urlencoded({limit: '50mb'}));
 
     }
 
-    jQuery('.leaflet-marker-pane img').click(function(){
+    jQuery(document).on('click','.leaflet-marker-pane img',function(){
+        //alert('tig marker');
         jQuery('.leaflet-marker-pane img').removeClass('selected_mark');
         jQuery(this).addClass('selected_mark'); 
     });
 
     jQuery(document).on('click','.remove_this',function(){
         
-        //alert('AA');
+        /* 
+        * Create Handler for Deleting Specific Item from List
+        */
+       jQuery('.leaflet-popup-content').remove();
+
+        const pathsb = require('path');
+        var running_on = pathsb.resolve(__dirname);
+        var path_of_json = running_on+'/projects/'+project_path.replace(" ", "")+'/'+project_path.replace(" ", "")+'/project/';
+
+
+       var get_num_item = jQuery(this).attr('its_item');
+       var get_file_name = jQuery(this).attr('onfile');
+
+       if(get_file_name == "gli"){
+       
+        fs.readFile(path_of_json+'/GLI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            //alert('READ');
+            student.splice(get_num_item,1); 
+            //var save_new_data = JSON.parse(student);
+            fs.writeFile(path_of_json+'/GLI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+              });
+            console.log('GLI File Updated');
+        });
+       }
+
+       if(get_file_name == "ngbdi"){
+       
+        fs.readFile(path_of_json+'/NGBDI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            //alert('READ');
+            student.splice(get_num_item,1); 
+            //var save_new_data = JSON.parse(student);
+            fs.writeFile(path_of_json+'/NGBDI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+              });
+            console.log('NGBDI File Updated');
+        });
+       }
+
+       if(get_file_name == "ngrdi"){
+        
+        fs.readFile(path_of_json+'/NGRDI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            //alert('READ');
+            student.splice(get_num_item,1); 
+            //var save_new_data = JSON.parse(student);
+            fs.writeFile(path_of_json+'/NGRDI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+              });
+            console.log('NGRDI File Updated');
+        });
+       }
+
+       if(get_file_name == "vari"){
+        
+        fs.readFile(path_of_json+'/VARI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            //alert('READ');
+            student.splice(get_num_item,1); 
+            //var save_new_data = JSON.parse(student);
+            fs.writeFile(path_of_json+'/VARI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+              });
+            console.log('VARI File Updated');
+        });
+       }
+
+       
+
+
+       // General Use remove marker
         jQuery('.leaflet-popup-pane div').remove();
         jQuery('.selected_mark').remove();
         jQuery('a.leaflet-popup-close-button').click();
 
     });
+
+
     // Function that checks if stiched image exists and than draw it on map
     function draw_stiched_image(){
         const fs = require('fs');
@@ -2179,26 +2176,177 @@ Lower right corner: 40.57197854729044, 22.99985538092048
       }
 
       /* 
-       EXAMPLES OF TOASTING MESSAGES 
+       Return Folders of PhotoGallery
       */
+       function getDirectoriesGallery(path) {
+        return fs.readdirSync(path).filter(function(file) {
+            return fs.statSync(path + '/' + file).isDirectory();
+        });
+    }
 
-       /*
+    jQuery('h6#photo_gallery_list').click(function(){
 
-    toast({
-      title: "Thành công!",
-      message: "Bạn đã đăng ký thành công tài khoản tại F8.",
-      type: "success",
-      duration: 5000
+        jQuery('.gallery_list_dynamic li').remove();
+        var running_on = path.resolve(__dirname);
+        var plan_name = localStorage.getItem("LoadProject");
+        var get_galleries = getDirectoriesGallery(running_on+'/projects/' + plan_name.trim() + '/project_images/');
+        //console.log(get_galleries);
+
+   
+        try{
+            get_galleries.forEach(element =>{ console.log(element)
+            var date = new Date(parseInt(element));
+            date = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+            var complete_path = running_on+'/projects/' + plan_name.trim() + '/project_images/'+element;
+            jQuery('.gallery_list_dynamic').append('<li path_of_image="'+complete_path+'" class="nav-item slider_inside_li"> <div class="slider_title"> <label>'+date+'</label> </div> </li>');
+            // end foreach
+            });
+            
+        }catch{
+            console.log('No Gallery So Far');
+        }
+          
+          //console.log(timeConverter());
+         
     });
-	
-	
-	toast({
-      title: "Thất bại!",
-      message: "Có lỗi xảy ra, vui lòng liên hệ quản trị viên.",
-      type: "error",
-      duration: 5000
-    });
 
-    */
+    /* Trigger Toggle and draw Markers Mechanism */
+    jQuery('.checkbox input:checked').length;
+
+jQuery('.checkbox input:checked').length;
+
+jQuery('.model-7 input').change(function(){
+
+    const pathsb = require('path');
+    var running_on = pathsb.resolve(__dirname);
+    var path_of_json = running_on+'/projects/'+project_path.replace(" ", "")+'/'+project_path.replace(" ", "")+'/project/';
+
+var item_get = jQuery(this).attr('indeces_selection');
+
+if(item_get == "gli_markers"){
+
+// Is enabled
+if(jQuery('input[indeces_selection="gli_markers"]:checked').length == 1){
+
+// Draw Markers
+var gli_centers = fs.readFileSync(path_of_json + '/GLI.json', 'utf8');
+            console.log(gli_centers);
+            var gli_centers_json = JSON.parse(gli_centers);
+
+                    /* CREATING MARKERS FOR GLI CENTERS */
+
+        for(var item in gli_centers_json) {
+            
+            var lat = gli_centers_json[item]["Lat"];
+            var lon = gli_centers_json[item]["Lon"];
+            var img_near = gli_centers_json[item]["Nearest_image"];
+            img_near = img_near.split(" ");
+            var path_of_photos = localStorage.getItem("Save_Image_Path");
+            path_of_photos.replace("\\","/");
+            marker = new L.marker([lon,lat],{
+                title: 'markers_of_gli',
+                icon: alert_indeces
+            }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="gli" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
+                //console.log(lat,lon);
+
+          }
+
+
+}else{
+// Remove Markers
+jQuery('img[title="markers_of_gli"]').remove();
+}
+
+}else if(item_get == "nbgdi_markers"){
+
+    if(jQuery('input[indeces_selection="nbgdi_markers"]:checked').length == 1){
+     //alert('NGBDI');
+     var ngbdi_centers = fs.readFileSync(path_of_json + '/NGBDI.json', 'utf8');
+     var ngbdi_centers_json = JSON.parse(ngbdi_centers);
+
+     
+ /* CREATING MARKERS FOR NGBDI CENTERS */
+ for(var item in ngbdi_centers_json) {
+     var lat = ngbdi_centers_json[item]["Lat"];
+     var lon = ngbdi_centers_json[item]["Lon"];
+     var img_near = ngbdi_centers_json[item]["Nearest_image"];
+     img_near = img_near.split(" ");
+     var path_of_photos = localStorage.getItem("Save_Image_Path");
+     path_of_photos.replace("\\","/");
+     marker = new L.marker([lon,lat],{
+         title: 'markers_of_nbgdi',
+         icon: alert_indeces
+     }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="ngbdi" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
+
+   }
+
+}else{
+    jQuery('img[title="markers_of_nbgdi"]').remove();
+}
+
+
+}else if(item_get == "ngrdi_markers"){
+
+    if(jQuery('input[indeces_selection="ngrdi_markers"]:checked').length == 1){
+
+        var ngrdi_centers = fs.readFileSync(path_of_json + '/NGRDI.json', 'utf8');     
+        var ngrdi_centers_json = JSON.parse(ngrdi_centers);
+
+         /* CREATING MARKERS FOR ngrdi_centers_json CENTERS */
+         for(var item in ngrdi_centers_json) {
+            var lat = ngrdi_centers_json[item]["Lat"];
+            var lon = ngrdi_centers_json[item]["Lon"];
+            var img_near = ngrdi_centers_json[item]["Nearest_image"];
+            img_near = img_near.split(" ");
+            var path_of_photos = localStorage.getItem("Save_Image_Path");
+            path_of_photos.replace("\\","/");
+
+            marker = new L.marker([lon,lat],{
+                title: 'markers_of_ngrdi',
+                icon: alert_indeces
+            }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="ngrdi" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
+
+          }   
+
+
+
+    }else{
+        jQuery('img[title="markers_of_ngrdi"]').remove();
+    }
+
+
+}else if(item_get == "vari_markers"){
+
+    if(jQuery('input[indeces_selection="vari_markers"]:checked').length == 1){
+
+        var vari_centers = fs.readFileSync(path_of_json + '/VARI.json', 'utf8');
+            var vari_centers_json = JSON.parse(vari_centers);
+    
+              /* CREATING MARKERS FOR vari CENTERS */
+              for(var item in vari_centers_json) {
+                  var lat = vari_centers_json[item]["Lat"];
+                  var lon = vari_centers_json[item]["Lon"];
+                  var img_near = vari_centers_json[item]["Nearest_image"];
+                              img_near = img_near.split(" ");
+            var path_of_photos = localStorage.getItem("Save_Image_Path");
+            path_of_photos.replace("\\","/");
+
+                  marker = new L.marker([lon,lat],{
+                      title: 'markers_of_vari',
+                      icon: alert_indeces
+                    }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="vari" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
+      
+                }
+
+
+    }else{
+        jQuery('img[title="markers_of_vari"]').remove();
+    }
+
+
+
+}
+
+});
 
 });

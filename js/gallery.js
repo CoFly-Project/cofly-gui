@@ -1,9 +1,15 @@
-jQuery(document).ready(function(){
+
 
     // Author: Konstantinos Englezos
     // EXPERIMENTAL
+    jQuery('body').on('click','.gallery_list_dynamic li',function(){
+
+      var g_path = jQuery(this).attr('path_of_image');
+
+
+    
   
-    const index = el => [...el.parentElement.children].indexOf(el);
+    var index = el => [...el.parentElement.children].indexOf(el);
     const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a));
     const keyboard = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter"];
     function init() {
@@ -29,28 +35,36 @@ jQuery(document).ready(function(){
 */
         // File Manager read from received images 
         const fs = require('fs')
-        const pathsb = require('path');
+        var pathsb = require('path');
         var running_on = pathsb.resolve(__dirname); 
         var project_path = localStorage.getItem("LoadProject");
         var path_of_json = running_on+'/projects/'+project_path.replace(" ", "")+'/'+project_path.replace(" ", "")+'/project/';
-        var custom_path = 'C:/Users/ENGLEZOS/Desktop/images/'; // for debuggind porpose
+        //var custom_path = 'C:/Users/ENGLEZOS/Desktop/images/'; // for debuggind porpose
+        var custom_path = g_path.toString() + '/';
+        console.log(custom_path);
         //fs.readdir(running_on + '/projects/' +project_path.replace(" ", "") + '/'+project_path.replace(" ", "")+'/project/', (err, files) => {
         fs.readdir(custom_path, (err, files) => {
                 
             var files_size = 0;
+            jQuery('.viewport .canvas .created').remove();
+            
+            //jQuery('.map-container .map div').remove();
             files.forEach(file => {
                 
                 //console.log('The Ext name is: ',pathsb.extname(file));
                 // File Handler add only images
-                if(pathsb.extname(file) == ".jpeg"){
-                    assets.push('C:/Users/ENGLEZOS/Desktop/images/'+file);
+                if(pathsb.extname(file) == ".jpg" || pathsb.extname(file) == ".jpeg"){
+                  //var replaced = custom_path.replace(String.fromCharCode(92),String.fromCharCode(92,92));
+                  var test = custom_path+"/"+file;
+                  var replaced = test.replace(/\\/g, "\\\\");
+                    assets.push(replaced);
                     files_size++;
                     if(files_size == 1){
-                        jQuery('.viewport .canvas').append('<div class="selected"></div>');
+                        jQuery('.viewport .canvas').append('<div class="created selected"><img src="'+replaced+'"></div>');
                         jQuery('.map-container .map').append('<div></div>');
                     }else{
                         console.log('found image');
-                    jQuery('.viewport .canvas').append('<div></div>');
+                    jQuery('.viewport .canvas').append('<div class="created"><img src="'+replaced+'"></div>');
                     jQuery('.map-container .map').append('<div></div>');
                     }
                     
@@ -58,6 +72,8 @@ jQuery(document).ready(function(){
                 }
                 //console.log('File Found From Gallery JS:',file);    
             });
+
+            console.log(assets);
 
         });
   
@@ -188,7 +204,11 @@ jQuery(document).ready(function(){
         [...canvas.querySelectorAll("div")].forEach((v, i) => {
           let img = new Image();
           v.innerHTML = "";
-          img.src = assets[i];
+          var pathsb = require('path');
+          var running_on = pathsb.resolve(__dirname); 
+          var project_path = localStorage.getItem("LoadProject");
+          img.src =assets[i];
+          console.log(img.src);
           img.crossOrigin = "";
           img.onload = () => {
             img.alt = "";
@@ -244,9 +264,8 @@ jQuery(document).ready(function(){
   
     init();
   
+  });
 
 
-
-});
 
     
