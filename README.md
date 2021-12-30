@@ -24,7 +24,7 @@ npm start
 ## Usage
 
 Load / Create / Import Project
-
+![alt text](https://github.com/CoFly-Project/cofly-gui/readme_images/main_screen.gif?raw=true)
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
