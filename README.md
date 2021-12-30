@@ -24,7 +24,35 @@ npm start
 ## Usage
 
 Load / Create / Import Project
-![alt text](https://github.com/CoFly-Project/cofly-gui/readme_images/main_screen.gif?raw=true)
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/main_screen.gif?raw=true?raw=true)
+
+Set your scanning field
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/field_selection.jpg?raw=true)
+
+Set Obstacles & Calculate Drone 
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/obstacles_gid.gif?raw=true)
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/calculated_map.jpg?raw=true)
+
+
+Excecute the mission
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/mission_start.gif?raw=true)
+
+Finish Mission & Calendar
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/finish_scan_imerologio_agrou.gif?raw=true)
+
+
+Stiched Image
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/stiching_photo.gif?raw=true)
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/stiched_image.jpg?raw=true)
+
+Photo Indices
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/photo_indeces.gif?raw=true)
+
+Problematic Areas
+![alt text](https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/alerts.gif?raw=true)
+
+
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
