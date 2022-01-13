@@ -1,12 +1,10 @@
 # CoFly GUI
 
-CoFly development with Electron (formerly known as Atom Shell) is a free and open-source software framework developed and maintained by GitHub.
-
-It allows for the development of desktop GUI applications using web technologies: it combines the Chromium rendering engine and the Node. js runtime.
-
-CoFly is running third party plugins in order to complete tasks. Third party modules are prebuild in .exe format and was developed with python.
-
-For demo propose, you are able to find all the necessary simulators in order to simulate a drone flight and be familiar with the program.
+Project Description
+----------------------
+This paper presents a novel, low-cost, user-friendly Precision Agriculture platform that attempts to alleviate the drawbacks of limited battery life by carefully designing missions tailored to each field's specific, time-changing characteristics. The proposed system is capable of designing coverage missions for any type of UAVs, integrating field characteristics inside the resulting trajectory, such as irregular field shape and obstacles. The collected images are automatically processed to create detailed orthomosaics of the field and extract the corresponding vegetation indices. A novel mechanism is then introduced that automatically extracts possible problematic areas of the field and subsequently designs a follow-up UAV mission to acquire extra information on these regions. The toolchain is completed by employing a specifically designed deep learning module to detect weeds in the close-examination flight. For the development of such a deep-learning module, a new weeds dataset from the UAV's perspective, which is publicly available for download, was collected and annotated. All
+the above functionalities are enclosed into an open-source, end-to-end platform, named Cognitional Operations of micro Flying vehicles (CoFly). The effectiveness of the proposed system was tested and validated with extensive experimentation in
+agricultural fields with cotton in Larissa, Greece during two different crop sessions.
 
 ## Installation
 
