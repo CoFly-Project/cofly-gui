@@ -2089,3 +2089,15 @@ section.model-7{
   background: #fec840;
   left: 50px;
 }
+
+.CalculatedPathRenderSeccond {
+  z-index: 48 !important;
+}
+
+svg.leaflet-zoom-animated.comeinfront {
+  z-index: 9999 !important;
+}
+
+svg.leaflet-zoom-animated.comeinfront g path:nth-child(1) {
+  fill-opacity: 0;
+}

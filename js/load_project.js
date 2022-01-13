@@ -79,6 +79,7 @@ jQuery(document).ready(function() {
             
             // Camera Topic
             if(topic.toString().indexOf("camera/dji.phantom.4.pro.hawk.1") != -1){
+                can_save_image = true;
                 //console.log('REA CAMERA');
                 if (can_save_image){
                     image_id++;
@@ -132,17 +133,22 @@ jQuery(document).ready(function() {
                         exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
                         exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
                         exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
+                        exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
+                        exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
+                        exifObj["GPS"][piexif.GPSIFD.GPSLatitudeRef] = "N";
+                        exifObj["GPS"][piexif.GPSIFD.GPSLongitudeRef] = "E";
+                        exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
 
                         function degToDmsRational(degFloat) {
                             var minFloat = degFloat % 1 * 60
                             var secFloat = minFloat % 1 * 60
-                            var deg = Math.floor(degFloat)
-                            var min = Math.floor(minFloat)
-                            var sec = Math.round(secFloat * 100)
+                            var deg = degFloat
+                            var min = minFloat
+                            var sec = secFloat * 100
                         
-                            deg = Math.abs(deg) * 1
-                            min = Math.abs(min) * 1
-                            sec = Math.abs(sec) * 1
+                            deg = deg * 1
+                            min = min * 1
+                            sec = sec * 1
                           
                             return [[deg, 1], [min, 1], [sec, 100]]
                           }
@@ -489,33 +495,34 @@ app.use(express.urlencoded({limit: '50mb'}));
 
    app.post('/calculated_path', function(req, res) {
         
-            //console.log(req.body);
-
+            console.log(req);
+            //alert('sdfsdf');
+            res.status(200).send('Path Received');
             // Remove extra layer if exist from previous calculation
             if(jQuery('.CalculatedPathRender').length > 0){
                 jQuery('.CalculatedPathRender').remove();
             }
     
             var path = req.body;
-            console.log(path);
+            //console.log(path.DataObject.path.waypoints);
             var pointList = [];
         
-            for (var points = 0; points < path.DataObject.path.waypoints.length; points++) {
-    
-                //var tmp_point = new L.LatLng(path.DataObject.path.waypoints[points]);
-    
+            for (var points = 0; points < path.DataObject.path.waypoints.length; points++) {    
     
                 var test = String(path.DataObject.path.waypoints[points]);
-                //console.log(test);
-                var res_g = test.split("{latitude: ", 3);
-                var res_t = test.split(", lognitude :", 3);
-                var lon = res_t[1].split(" }", 3);
-                var lat = res_g[1].split(" ,", 3);
+                test = test.replace('{latitude:','{"latitude":');
+                test = test.replace('longitude :','"longitude" :');
+
+                test = JSON.parse(test);
+                var lon = test.longitude;
+                var lat = test.latitude;
     
-                var tmp_point = new L.LatLng($.trim(lon[0]), $.trim(lat[0]));
+                var tmp_point = new L.LatLng(lat,lon);
                 pointList.push(tmp_point);
             }
         //console.log(pointList);
+        if(mission_mode == 1){
+            
         var firstpolyline = new L.Polyline(pointList, {
             color: 'white',
             weight: 3,
@@ -523,12 +530,28 @@ app.use(express.urlencoded({limit: '50mb'}));
             smoothFactor: 1,
             className : 'CalculatedPathRender'
         });
+        }else{
+
+            if(jQuery('path.CalculatedPathRenderSeccond.leaflet-interactive').length > 1){
+                jQuery('path.CalculatedPathRenderSeccond.leaflet-interactive').remove();
+            }
+            
+        var firstpolyline = new L.Polyline(pointList, {
+            color: 'white',
+            weight: 3,
+            opacity: 0.8,
+            smoothFactor: 1,
+            className : 'CalculatedPathRenderSeccond'
+        });
+
+        jQuery('svg.leaflet-zoom-animated').addClass('comeinfront');
+        }
         // This is an amazing polyline in order to communicate 
         firstpolyline.addTo(map);
 
         //console.log(pointList);
 
-        res.status(200).send('Path Received');
+        //res.status(200).send('Path Received');
 
         jQuery('#pop_up_container').fadeOut();
         //jQuery('div#calculate_path_planing').fadeOut();
@@ -611,7 +634,7 @@ app.use(express.urlencoded({limit: '50mb'}));
 
     // Calculate path button trigger
     jQuery('div#calculate_path_planing').click(function() {
-
+        mission_mode = 1;
         console.log('Calculate Path Triggered');
         const fixPath = require('fix-path');
 //=> '/usr/local/bin:/usr/bin'
@@ -629,9 +652,9 @@ app.use(express.urlencoded({limit: '50mb'}));
         console.log(err)
         console.log(data.toString());
         var temp_time = data.split("Time (min) : ");
-        var final_time = temp_time[1].split("Communication");
-        var fix_format = parseFloat(final_time[0]).toFixed(2);
-        jQuery('span#minutes_calc').text(fix_format.replace(".",":") + " Mins");
+        //var final_time = temp_time[1].split("Communication");
+        //var fix_format = parseFloat(final_time[0]).toFixed(2);
+        //jQuery('span#minutes_calc').text(fix_format.replace(".",":") + " Mins");
         //jQuery('div#pop_up_container').fadeOut();
         jQuery('#Loader_Proccess_PopUp').fadeOut(2000);
     });
@@ -663,6 +686,155 @@ app.use(express.urlencoded({limit: '50mb'}));
 
     });
 
+    /* Excecute The Seccond Fly  */
+     // Calculate path button trigger
+     jQuery('div#calculate_path_planing_mission_two').click(function() {
+        mission_mode = 2;
+        // Create the final file of problematic arreas
+        create_seccond_mission_file();
+        console.log('Calculate Path Triggered MISSION 2');
+        const fixPath = require('fix-path');
+//=> '/usr/local/bin:/usr/bin'
+        // RUN EXCECUTABLE HERE
+
+    var child = require('child_process').execFile;
+    var final_path = path.resolve(__dirname+'/third_party_plugins/PathPlanning', 'GeoCordinates.exe');
+    console.log(final_path);
+    var executablePath = final_path;
+    var running_on = path.resolve(__dirname);
+    var parameters = [running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/problematic_areas_points.json", running_on.replace(/\\/g, "/") +"/projects/"+localStorage.getItem("LoadProject").trim()+"/disabled_paths.geojson", jQuery('input#direction_show').val().slice(0,-1), jQuery('input#scanning_distance_now').val().slice(0,-1),2,jQuery('input#drone_speed').val().replace("m/s","")];
+    //var parameters = ["./projects/"+localStorage.getItem("LoadProject").trim()+"/map_data.geojson"];
+        console.log(parameters)
+    child(executablePath,parameters, function(err, data) {
+        console.log(err)
+        console.log(data.toString());
+        var temp_time = data.split("Time (min) : ");
+        //var final_time = temp_time[1].split("Communication");
+        //var fix_format = parseFloat(final_time[0]).toFixed(2);
+        //jQuery('span#minutes_calc').text(fix_format.replace(".",":") + " Mins");
+        //jQuery('div#pop_up_container').fadeOut();
+        jQuery('#Loader_Proccess_PopUp').fadeOut(2000);
+    });
+
+            // show loading pop up
+            //jQuery('#pop_up_container').fadeIn();
+            jQuery('#Loader_Proccess_PopUp').fadeIn(1000);
+            //jQuery('.pop_up_content').prepend('<div class="loader loader--style5" title="4"> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve"> <rect x="0" y="0" width="4" height="10" fill="#333"> <animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0" dur="0.6s" repeatCount="indefinite" /> </rect> <rect x="10" y="0" width="4" height="10" fill="#333"> <animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0.2s" dur="0.6s" repeatCount="indefinite" /> </rect> <rect x="20" y="0" width="4" height="10" fill="#333"> <animateTransform attributeType="xml" attributeName="transform" type="translate" values="0 0; 0 20; 0 0" begin="0.4s" dur="0.6s" repeatCount="indefinite" /> </rect> </svg> </div>');
+            //jQuery('.pop_up_content p').text('Path Calculation Started');
+            //jQuery('.button_all_ok').attr('style', 'display:none;');
+
+
+
+
+    // Debug kill after 1 min if path doesn't appear
+    setTimeout(function(){ 
+        
+        if(!jQuery('div#Loader_Proccess_PopUp').is(':hidden')){
+            //jQuery('#pop_up_container').fadeOut();
+            //alert('ERROR WHILE CALCULATING THE PATH');
+            console.log('CALCULATION TIME IS SLOW - MAYBE ERROR !?');
+            jQuery('.card-information__text').html('<a style="color: red !important;" href="#">Slow, path calculation detected! Cancel job & change settings? </a>');
+
+        }
+
+    }, 60000);
+
+
+
+    });
+
+    /* Function that Creates The Problematic Areas file Points */
+    jQuery('i.fas.fa-ruler-horizontal').click(function(){
+        create_seccond_mission_file();
+    });
+
+    function create_seccond_mission_file(){
+        alert('Triggered Seccond Mission');
+
+        const pathsb = require('path');
+        var running_on = pathsb.resolve(__dirname);
+        var path_of_json = running_on+'/projects/'+project_path.replace(" ", "")+'/'+project_path.replace(" ", "")+'/project/';
+        /* Keep All The Points */
+        var points_of_mission_two = [];
+        fs.readFile(path_of_json+'/GLI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            student.forEach(function (s) {
+                
+                points_of_mission_two.push([s.Lat,s.Lon]);
+                
+            });
+            
+            /*
+            fs.writeFile(path_of_json+'/GLI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+            });
+            */
+        });
+
+        fs.readFile(path_of_json+'/NGBDI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            student.forEach(function (s) {
+                
+                points_of_mission_two.push([s.Lat,s.Lon]);
+                
+            });
+            
+            /*
+            fs.writeFile(path_of_json+'/GLI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+            });
+            */
+        });
+
+        fs.readFile(path_of_json+'/NGRDI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            student.forEach(function (s) {
+                
+                points_of_mission_two.push([s.Lat,s.Lon]);
+                
+            });
+            
+            /*
+            fs.writeFile(path_of_json+'/GLI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+            });
+            */
+        });
+
+        fs.readFile(path_of_json+'/VARI.json', (err, data) => {
+            if (err) throw err;
+            let student = JSON.parse(data);
+            console.log(student);
+            student.forEach(function (s) {
+                
+                points_of_mission_two.push([s.Lat,s.Lon]);
+                
+            });
+            
+            /*
+            fs.writeFile(path_of_json+'/GLI.json', JSON.stringify(student), function(err, result) {
+                if(err) console.log('error', err);
+            });
+            */
+        });
+
+
+                setTimeout(function() { 
+                    fs.writeFile(running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/problematic_areas_points.json",'{"type":"FeatureCollection","features":[{"type":"Feature","InitialPosition":[22.99875248830541,40.57380159336778],"geometry":{"type":"Polygon","coordinates":['+JSON.stringify(points_of_mission_two)+']}}]}', function(err, result) {
+                        if(err) console.log('error', err);
+                    });
+                }, 2000);
+               
+
+                console.log(JSON.stringify(points_of_mission_two));
+
+    }
 
     // Excecute RGB VLS INDECES 
     // Pattern Navigation: projects/[project_name]/rgb_vls_results/
@@ -1988,7 +2160,10 @@ Lower right corner: 40.57197854729044, 22.99985538092048
         
 
         // MUST READ FROM FILE BOUND BOX
-        cimageBounds = L.bounds([[40.573994502284826, 22.997514351202266],[40.57201471549072, 23.00005946100994]]);
+        var bound_boxes = fs.readFileSync(running_on+'/projects/'+project_path.replace(" ", "")+'/stiched_images/edges.json', 'utf8');
+        var json_bounds = JSON.parse(bound_boxes);
+        cimageBounds = L.bounds([json_bounds["Lower_right_corner"],json_bounds["Upper_left_corner"]]);
+        //cimageBounds = L.bounds([[40.573994502284826, 22.997514351202266],[40.57201471549072, 23.00005946100994]]);
         //console.log(cimageBounds.getCenter());
         imageBounds = [cimageBounds.getCenter(), [40.573994502284826, 22.997514351202266],[40.57201471549072, 23.00005946100994]];
 
