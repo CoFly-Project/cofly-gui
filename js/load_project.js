@@ -25,7 +25,12 @@ jQuery(document).ready(function() {
         var can_save_image = false;
         var camera_topic;
         var image_list = [];
-        //alert('eftasa');
+
+
+        // Drone Position 
+        var drone_general_longtitute = 0;
+        var drone_general_latitude = 0;
+        var points_two = [];
     
         client.on('connect', function () {
             console.log('MQTT SERVER SUCCESSFULLY CONNECTED');
@@ -79,7 +84,7 @@ jQuery(document).ready(function() {
             
             // Camera Topic
             if(topic.toString().indexOf("camera/dji.phantom.4.pro.hawk.1") != -1){
-                can_save_image = true;
+                //can_save_image = true;
                 //console.log('REA CAMERA');
                 if (can_save_image){
                     image_id++;
@@ -107,62 +112,135 @@ jQuery(document).ready(function() {
                 // 'ID_'+image_id'+_UAV_dji.phantom.4.pro.hawk.1_[Lat='+camera_topic.latitude+',Lon='+camera_topic.longitude+',Alt='+camera_topic.altitude+']_DATE_'+timestamp
                 // ID_0_UAV_dji.phantom.4.pro.hawk.1_[Lat=40.573284372317666,Lon=22.998578042988207,Alt=21.200000762939453]_DATE_24_07_2020_20_35_4467f3f951-7e7f-4757-8025-8e6855981a66
                 var camera_lat = camera_topic.latitude;
-                var camera_lon = camera_topic.longitude
-                require("fs").writeFile(localStorage.getItem('Save_Image_Path') +'/' + filename + '.jpg', base64Data, 'base64', function(err) {
+                var camera_lon = camera_topic.longitude;
+                if(mission_mode == 1){
+
+
+                    require("fs").writeFile(localStorage.getItem('Save_Image_Path') +'/' + filename + '.jpg', base64Data, 'base64', function(err) {
                 
-                    if(err){
-                        console.log(err);
-                    }else{
-                        //print_project_gallery();
-                        console.log('SAVE DONE');
-                        var piexif = require("piexifjs");
-                        var path_of_image = localStorage.getItem('Save_Image_Path') +'/' + filename + '.jpg';
-                        //console.log(path_of_image);
-                        var jpeg_read = fs.readFileSync(path_of_image);
-                        var data = jpeg_read.toString("binary");
-                        //console.log(data);
-                        
-                        var exifObj = piexif.load(data);
-
-                        
-                        //var fs = required("fs");
-                        
-                       
-                        exifObj["GPS"][piexif.GPSIFD.GPSVersionID] = [7, 7, 7, 7];
-                        exifObj["GPS"][piexif.GPSIFD.GPSDateStamp] = "1999:99:99 99:99:99";
-                        exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
-                        exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
-                        exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
-                        exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
-                        exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
-                        exifObj["GPS"][piexif.GPSIFD.GPSLatitudeRef] = "N";
-                        exifObj["GPS"][piexif.GPSIFD.GPSLongitudeRef] = "E";
-                        exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
-
-                        function degToDmsRational(degFloat) {
-                            var minFloat = degFloat % 1 * 60
-                            var secFloat = minFloat % 1 * 60
-                            var deg = degFloat
-                            var min = minFloat
-                            var sec = secFloat * 100
-                        
-                            deg = deg * 1
-                            min = min * 1
-                            sec = sec * 1
-                          
-                            return [[deg, 1], [min, 1], [sec, 100]]
-                          }
-                        var exifbytes = piexif.dump(exifObj);
-                        var newData = piexif.insert(exifbytes, data);
-                        var newJpeg = new Buffer(newData, "binary");
-                        fs.writeFileSync(path_of_image, newJpeg);
-
-                        //fs.writeFileSync(path_of_image, inserted);
-                        console.log('ADD WITH META');
-                        
-                    }
-                });
+                        if(err){
+                            console.log(err);
+                        }else{
+                                //print_project_gallery();
+                            console.log('SAVE DONE');
+                            var piexif = require("piexifjs");
+                            var path_of_image = localStorage.getItem('Save_Image_Path') +'/' + filename + '.jpg';
+                            //console.log(path_of_image);
+                            var jpeg_read = fs.readFileSync(path_of_image);
+                            var data = jpeg_read.toString("binary");
+                            //console.log(data);
+                            
+                            var exifObj = piexif.load(data);
     
+                            
+                            //var fs = required("fs");
+                            
+                           
+                            exifObj["GPS"][piexif.GPSIFD.GPSVersionID] = [7, 7, 7, 7];
+                            exifObj["GPS"][piexif.GPSIFD.GPSDateStamp] = "1999:99:99 99:99:99";
+                            exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
+                            exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
+                            exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
+                            exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
+                            exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
+                            exifObj["GPS"][piexif.GPSIFD.GPSLatitudeRef] = "N";
+                            exifObj["GPS"][piexif.GPSIFD.GPSLongitudeRef] = "E";
+                            exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
+    
+                            function degToDmsRational(degFloat) {
+                                var minFloat = degFloat % 1 * 60
+                                var secFloat = minFloat % 1 * 60
+                                var deg = degFloat
+                                var min = minFloat
+                                var sec = secFloat * 100
+                            
+                                deg = deg * 1
+                                min = min * 1
+                                sec = sec * 1
+                              
+                                return [[deg, 1], [min, 1], [sec, 100]]
+                              }
+                            var exifbytes = piexif.dump(exifObj);
+                            var newData = piexif.insert(exifbytes, data);
+                            var newJpeg = new Buffer(newData, "binary");
+                            fs.writeFileSync(path_of_image, newJpeg);
+    
+                            //fs.writeFileSync(path_of_image, inserted);
+                            console.log('ADD WITH META');
+                        }
+                    });
+
+
+
+                }else if(mission_mode == 2){
+                    find_the_point_of_interest();
+                    //alert('its mission mode 2');
+                    //console.log('Its mission mode 2 do not save nothing');
+                    var check_save = localStorage.getItem("can_save_photos_for_seccond_mission");
+                    if(check_save == "true"){
+                        //alert('Now i can save on path'+localStorage.getItem("Save_Image_Path"));
+                        require("fs").writeFile(localStorage.getItem('Save_Image_Path_Mission_two') +'/' + filename + '.jpg', base64Data, 'base64', function(err) {
+                
+                            if(err){
+                                console.log(err);
+                            }else{
+                                    //print_project_gallery();
+                                console.log('SAVE DONE MISSION 2');
+                                var piexif = require("piexifjs");
+                                var path_of_image = localStorage.getItem('Save_Image_Path_Mission_two') +'/' + filename + '.jpg';
+                                //console.log(path_of_image);
+                                var jpeg_read = fs.readFileSync(path_of_image);
+                                var data = jpeg_read.toString("binary");
+                                //console.log(data);
+                                
+                                var exifObj = piexif.load(data);
+        
+                                
+                                //var fs = required("fs");
+                                
+                               
+                                exifObj["GPS"][piexif.GPSIFD.GPSVersionID] = [7, 7, 7, 7];
+                                exifObj["GPS"][piexif.GPSIFD.GPSDateStamp] = "1999:99:99 99:99:99";
+                                exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
+                                exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
+                                exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
+                                exifObj["GPS"][piexif.GPSIFD.GPSLatitude] = degToDmsRational(camera_lat);
+                                exifObj["GPS"][piexif.GPSIFD.GPSLongitude] = degToDmsRational(camera_lon);
+                                exifObj["GPS"][piexif.GPSIFD.GPSLatitudeRef] = "N";
+                                exifObj["GPS"][piexif.GPSIFD.GPSLongitudeRef] = "E";
+                                exifObj["GPS"][piexif.GPSIFD.GPSAltitude] = camera_topic.altitude;
+        
+                                function degToDmsRational(degFloat) {
+                                    var minFloat = degFloat % 1 * 60
+                                    var secFloat = minFloat % 1 * 60
+                                    var deg = degFloat
+                                    var min = minFloat
+                                    var sec = secFloat * 100
+                                
+                                    deg = deg * 1
+                                    min = min * 1
+                                    sec = sec * 1
+                                  
+                                    return [[deg, 1], [min, 1], [sec, 100]]
+                                  }
+                                var exifbytes = piexif.dump(exifObj);
+                                var newData = piexif.insert(exifbytes, data);
+                                var newJpeg = new Buffer(newData, "binary");
+                                fs.writeFileSync(path_of_image, newJpeg);
+        
+                                //fs.writeFileSync(path_of_image, inserted);
+                                console.log('ADD WITH META MISSION 2');
+                            }
+                        });
+                        
+
+
+                    }else{
+                        console.log('NO SAVING');
+                    }
+
+                }
+
                 }
                 
             }
@@ -171,31 +249,21 @@ jQuery(document).ready(function() {
             // Telemetry Topic
             if(topic.toString().indexOf("telemetry/dji.phantom.4.pro.hawk.1") != -1){
     
-                //console.log('Receive Camera');
+                //console.log('Receive Telemetry');
                 telemetry_topic = JSON.parse(message);
-                latitude = telemetry_topic.latitude
-                longitude = telemetry_topic.longitude
-    
+                latitude = telemetry_topic.latitude;
+                longitude = telemetry_topic.longitude;
+                
                 //console.log(latitude,longitude);
     
                 jQuery('.leaflet-marker-pane img[title="Drone Current Position"]').remove();
     
                 // draw new marker [Current] drone location
 
-           
-
-                if(latitude == "37.316314"){
-                    console.log('demo_position');
-                    var marker = L.marker(
-                        [40.57300986880264, 22.99893490662799], {
-                            title: 'Drone Current Position',
-                            icon: drone_icon
-                        }
-                    ).addTo(map);
-            
-                    //map.panTo(new L.LatLng(40.57300986880264, 22.99893490662799));
-                }else{
-
+                    // Store to general variables the drone position 
+                    drone_general_latitude = latitude;
+                    drone_general_longtitute = longitude;
+                    
                     var marker = L.marker(
                         [latitude,longitude], {
                             title: 'Drone Current Position',
@@ -203,9 +271,9 @@ jQuery(document).ready(function() {
                         }
                     ).addTo(map);
             
-                    //map.panTo(new L.LatLng(latitude, longitude));
+                    //map.panTo(new L.LatLng(latitude,longitude ));
 
-                }
+                
              
                 
                  
@@ -229,16 +297,20 @@ jQuery(document).ready(function() {
                     var plan_name = localStorage.getItem("LoadProject");
                     fs.writeFileSync(running_on+'/projects/' + plan_name.trim() + '/paths/image_list.txt', text, "utf8");
                 }else if(mission_status == "COMPLETED"){
+                    if(mission_mode == 1){
+                    jQuery('i.fas.fa-clock').click();
+                    }
                     mission_mode = 2;
                     console.log('Change Mode to 2 [ Calculate the path from problematic areas ]');
                     let text = image_list.join('\n');
                     var running_on = path.resolve(__dirname);
                     var plan_name = localStorage.getItem("LoadProject");
-                    fs.writeFileSync(running_on+'/projects/' + plan_name + '/paths/image_list.txt', text, "utf8");
+                    fs.writeFileSync(running_on+'/projects/' + plan_name.trim() + '/paths/image_list.txt', text, "utf8");
                     can_save_image = false;
                     scan_complete();
                     scan_completed();
-                    jQuery('i.fas.fa-clock').click();
+                    
+                    
                     //alert('fe');
                 }
                 console.log(mission_status);
@@ -248,51 +320,8 @@ jQuery(document).ready(function() {
             // End Status
     
     
-            // Mission Start
-            if(topic.toString().indexOf("missionStart/dji.phantom.4.pro.hawk.1") != -1){
-    
-                console.log('Receive start');
-                //console.log(message.toString());
-                    
-            }
-            // End Status
-    
-    
-    
             // client.end()
         })
-    
-        // Click to Start And send mission
-        /* 
-        {
-       "timestamp":1591881061228,
-       "missionId":"ee31b81e-ceaf-4539-8f97-a225f258ff31",
-       "destinationSystem":"dji.phantom.4.pro.hawk.1",
-       "sourceSystem":"choosepath-backend",
-       "speed":10.0,
-       "timeout":1800.0,
-       "cornerRadius":2.0,
-       "gimbalPitch":-87.0,
-       "waypoints":[
-          {
-             "latitude":38.023959787799186,
-             "longitude":23.743319065035404,
-             "altitude":35.0
-          },
-          {
-             "latitude":38.02260849889491,
-             "longitude":23.743339065022948,
-             "altitude":35.0
-          }
-       ]
-    }
-    
-    
-        */
-
-
-    //var pathsad = require("path");
-    //console.log(pathsad.resolve(__dirname, './projects/').replace(/\\/g,"/")+ "/" +localStorage.getItem("LoadProject") + "/project_images/");
 
     // Create Drone Location Marker
     var drone_icon = L.icon({
@@ -332,32 +361,12 @@ jQuery(document).ready(function() {
     var clean_center = get_center.split(",");
 
 
-    // Initialize map
-    /*
-    var accessToken = "pk.eyJ1IjoiY29mbHliYiIsImEiOiJja2sybjBtcjExMzNwMm5vNTd6dDFoNTVsIn0.MZttxhCpctPxyPZw7KC16Q";
-    L.mapbox.accessToken = accessToken;
-    var map = L.mapbox.map('map').setView([parseFloat(clean_center[1]), parseFloat(clean_center[0])], 17);
-    */
-
     L.mapbox.accessToken = 'pk.eyJ1IjoiZWdnbGV6b3NrIiwiYSI6ImNra2Z0NndyczBsYTUydm43Yjh3bDRvMHUifQ.cvUwSVInY69HPVpp1YdVIA';
 var map = L.mapbox.map('map')
     .setView([parseFloat(clean_center[1]), parseFloat(clean_center[0])], 18)
     .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/satellite-v9'));
     map.scrollWheelZoom.disable();
 
-    //map.addControl(new mapboxgl.NavigationControl());
-
-    // Add layers to the map
-    /*
-    L.control.layers({
-        'Satellite Map': L.mapbox.tileLayer('mapbox.satellite', {
-            detectRetina: true
-        }).addTo(map),
-        'Terrain Map': L.mapbox.tileLayer('mapbox.mapbox-terrain-v2', {
-            detectRetina: true
-        })
-    }).addTo(map);
-*/
     var featureGroup = L.featureGroup().addTo(map);
 
     
@@ -379,12 +388,6 @@ var map = L.mapbox.map('map')
         /*shadowUrl: 'img/leaf-shadow.png',*/
 
         iconSize: [50, 73], // size of the icon
-        /*
-        shadowSize: [50, 64], // size of the shadow
-        //iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-        iconAnchor: [25, 70], // point of the icon which will correspond to marker's location
-        shadowAnchor: [4, 62], // the same for the shadow
-        */
         popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
 
     });
@@ -393,14 +396,7 @@ var map = L.mapbox.map('map')
     
     console.log(disabled_paths());
     map.on('draw:created', function(e) {
-        //alert('Create new');
-        /* 
-        var disabledStyleF = {
-            "className" : "DisabledPathDraw"
-        };
-        e.layer.options = disabledStyleF;
-        */
-        //console.log(e.layer);
+      
         e.layer.options.className = "DisabledPathDraw";
         // Each time a feaute is created, it's added to the over arching feature group
         featureGroup.addLayer(e.layer);
@@ -597,41 +593,6 @@ app.use(express.urlencoded({limit: '50mb'}));
     app.listen(process.env.PORT || 8081);
 
 
-
-
-    // Function pou deixnei slide message gia kapoia wra kai meta to krubei 
-    function show_slide_message(message_string) {
-        jQuery('.slide_messages ul p').text(message_string);
-
-        if (show_slide) {
-            show_slide = false;
-            jQuery(".slide_messages ul").animate({
-                width: 'toggle'
-            }, 350);
-
-        }
-
-        //setimout
-        setTimeout(function() {
-
-            jQuery(".slide_messages ul").animate({
-                width: 'toggle'
-            }, 350);
-
-        }, 5000);
-
-        setTimeout(function() {
-
-            //show_slide = true;
-
-        }, 10000);
-
-
-
-
-    }
-
-
     // Calculate path button trigger
     jQuery('div#calculate_path_planing').click(function() {
         mission_mode = 1;
@@ -749,7 +710,7 @@ app.use(express.urlencoded({limit: '50mb'}));
     });
 
     function create_seccond_mission_file(){
-        alert('Triggered Seccond Mission');
+        
 
         const pathsb = require('path');
         var running_on = pathsb.resolve(__dirname);
@@ -759,10 +720,10 @@ app.use(express.urlencoded({limit: '50mb'}));
         fs.readFile(path_of_json+'/GLI.json', (err, data) => {
             if (err) throw err;
             let student = JSON.parse(data);
-            console.log(student);
+            //console.log(student);
             student.forEach(function (s) {
                 
-                points_of_mission_two.push([s.Lat,s.Lon]);
+                points_of_mission_two.push([s.Lon,s.Lat]);
                 
             });
             
@@ -779,7 +740,7 @@ app.use(express.urlencoded({limit: '50mb'}));
             console.log(student);
             student.forEach(function (s) {
                 
-                points_of_mission_two.push([s.Lat,s.Lon]);
+                points_of_mission_two.push([s.Lon,s.Lat]);
                 
             });
             
@@ -796,7 +757,7 @@ app.use(express.urlencoded({limit: '50mb'}));
             console.log(student);
             student.forEach(function (s) {
                 
-                points_of_mission_two.push([s.Lat,s.Lon]);
+                points_of_mission_two.push([s.Lon,s.Lat]);
                 
             });
             
@@ -813,7 +774,7 @@ app.use(express.urlencoded({limit: '50mb'}));
             console.log(student);
             student.forEach(function (s) {
                 
-                points_of_mission_two.push([s.Lat,s.Lon]);
+                points_of_mission_two.push([s.Lon,s.Lat]);
                 
             });
             
@@ -826,13 +787,101 @@ app.use(express.urlencoded({limit: '50mb'}));
 
 
                 setTimeout(function() { 
-                    fs.writeFile(running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/problematic_areas_points.json",'{"type":"FeatureCollection","features":[{"type":"Feature","InitialPosition":[22.99875248830541,40.57380159336778],"geometry":{"type":"Polygon","coordinates":['+JSON.stringify(points_of_mission_two)+']}}]}', function(err, result) {
+                    fs.writeFile(running_on.replace(/\\/g, "/") + "/projects/"+localStorage.getItem("LoadProject").trim()+"/problematic_areas_points.json",'{"type":"FeatureCollection","features":[{"type":"Feature","InitialPosition":['+drone_general_longtitute+','+drone_general_latitude+'],"geometry":{"type":"Polygon","coordinates":['+JSON.stringify(points_of_mission_two)+']}}]}', function(err, result) {
                         if(err) console.log('error', err);
                     });
-                }, 2000);
+                }, 5000);
                
 
-                console.log(JSON.stringify(points_of_mission_two));
+                //console.log(JSON.stringify(points_of_mission_two));
+                //find_the_point_of_interest(points_of_mission_two);
+                setTimeout(() => {
+                    
+                
+                    points_of_mission_two.forEach(function (s) {
+                        var create_names = s[1] + "," + s[0];
+                        var fs = require('fs');
+                        const path = require('path');
+                        var running_on = path.resolve(__dirname);
+                        fs.mkdir(running_on + '/projects/' + localStorage.getItem("LoadProject").replace(" ","")+'/weed_detection_markers_photo/'+create_names, { recursive: true }, (err) => {
+                            if (err) throw err;
+                        });
+                    });
+
+                points_two = points_of_mission_two;
+                
+                
+
+            }, 2500);
+            
+
+    }
+
+    /* function that checks in which point must keep photos */
+    function find_the_point_of_interest(){
+    
+        function distance(lat1,lat2, lon1, lon2)
+            {
+            lon1 =  lon1 * Math.PI / 180;
+            lon2 = lon2 * Math.PI / 180;
+            lat1 = lat1 * Math.PI / 180;
+            lat2 = lat2 * Math.PI / 180;
+
+            // Haversine formula
+            let dlon = lon2 - lon1;
+            let dlat = lat2 - lat1;
+            let a = Math.pow(Math.sin(dlat / 2), 2)
+                    + Math.cos(lat1) * Math.cos(lat2)
+                    * Math.pow(Math.sin(dlon / 2),2);
+                
+            let c = 2 * Math.asin(Math.sqrt(a));
+
+            // Radius of earth in kilometers. Use 3956
+            // for miles
+            let r = 6371;
+
+            // calculate the result
+            return(c * r);
+            }
+
+            // Get Drone location and all points from this one
+            //distance()
+            //alert('niax');
+            min = 9999999999;
+            var keep_it = "";
+            points_two.forEach(function (s) {
+                //points_of_mission_two.push([s.Lon,s.Lat]);
+                //alert('gga');
+                //alert(drone_general_latitude+' | '+drone_general_longtitute);
+                //console.log(distance(drone_general_latitude,s[1],drone_general_longtitute,s[0])*1000);
+                var result_calc = distance(drone_general_latitude,s[1],drone_general_longtitute,s[0]) * 1000;
+                if(result_calc < min){
+                    min = result_calc;
+                    keep_it = s[1] + "," + s[0];
+                }
+
+            });
+
+            console.log('CLOSEST POINT IS:'+keep_it + " DST:" + min);
+            
+
+            if(min < 5.2){
+                jQuery('img[title="'+keep_it+'"]').addClass('THISONEACTIVEMARKER');
+                console.log('Select Folder for images= ' + '/weed_detection_markers_photo/'+keep_it);
+                const path = require('path');
+                var running_on = path.resolve(__dirname);
+                localStorage.setItem("Save_Image_Path_Mission_two",running_on + '/projects/' + localStorage.getItem("LoadProject").replace(" ","")+'/weed_detection_markers_photo/'+keep_it);
+
+                localStorage.setItem("can_save_photos_for_seccond_mission",true);
+                // Creates /tmp/a/apple, regardless of whether `/tmp` and /tmp/a exist.
+                
+            }else{
+                jQuery('.THISONEACTIVEMARKER').removeClass('THISONEACTIVEMARKER');
+                console.log('TAXIDEUEI');
+                localStorage.setItem("can_save_photos_for_seccond_mission",false);
+            }
+
+    
 
     }
 
@@ -936,11 +985,6 @@ app.use(express.urlencoded({limit: '50mb'}));
                     console.log(data.toString());
                     jQuery('div#pop_up_container').fadeOut();
                     // Change state on file from now on indeces exists 
-                    /*
-                    fs.mkdir(running_on + '/projects/' + localStorage.getItem("LoadProject").replace(" ",""), function() {
-                        fs.writeFileSync(running_on + '/projects/' + localStorage.getItem("LoadProject").replace(" ","") + '/has_indeces.json', '{ "has_indeces": { "value": "1" } }');
-                    });
-                    */
 
                     // Read JSON Files 
                     //draw_photo_indices();
@@ -998,10 +1042,12 @@ app.use(express.urlencoded({limit: '50mb'}));
         var running_on = path.resolve(__dirname);
 
         // Create subdirectory on images in order to save the incoming images from server
+        if(mission_mode != 2){
         var date_time = Date.now();
         fs.mkdir(running_on + '/projects/' + localStorage.getItem("LoadProject").replace(" ","")+'/project_images/'+date_time, function() {
             localStorage.setItem('Save_Image_Path',running_on +'/projects/' + localStorage.getItem("LoadProject").replace(" ","")+'/project_images/'+date_time);
         });
+        }
 
 
         // Read the calclated path and make it ready for excecution
@@ -2412,14 +2458,14 @@ var gli_centers = fs.readFileSync(path_of_json + '/GLI.json', 'utf8');
 
         for(var item in gli_centers_json) {
             
-            var lat = gli_centers_json[item]["Lat"];
-            var lon = gli_centers_json[item]["Lon"];
+            var lat = gli_centers_json[item]["Lon"];
+            var lon = gli_centers_json[item]["Lat"];
             var img_near = gli_centers_json[item]["Nearest_image"];
             img_near = img_near.split(" ");
             var path_of_photos = localStorage.getItem("Save_Image_Path");
             path_of_photos.replace("\\","/");
             marker = new L.marker([lon,lat],{
-                title: 'markers_of_gli',
+                title: ""+lon+","+lat,
                 icon: alert_indeces
             }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="gli" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
                 //console.log(lat,lon);
@@ -2442,14 +2488,14 @@ jQuery('img[title="markers_of_gli"]').remove();
      
  /* CREATING MARKERS FOR NGBDI CENTERS */
  for(var item in ngbdi_centers_json) {
-     var lat = ngbdi_centers_json[item]["Lat"];
-     var lon = ngbdi_centers_json[item]["Lon"];
+     var lat = ngbdi_centers_json[item]["Lon"];
+     var lon = ngbdi_centers_json[item]["Lat"];
      var img_near = ngbdi_centers_json[item]["Nearest_image"];
      img_near = img_near.split(" ");
      var path_of_photos = localStorage.getItem("Save_Image_Path");
      path_of_photos.replace("\\","/");
      marker = new L.marker([lon,lat],{
-         title: 'markers_of_nbgdi',
+        title: ""+lon+","+lat,
          icon: alert_indeces
      }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="ngbdi" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
 
@@ -2469,15 +2515,15 @@ jQuery('img[title="markers_of_gli"]').remove();
 
          /* CREATING MARKERS FOR ngrdi_centers_json CENTERS */
          for(var item in ngrdi_centers_json) {
-            var lat = ngrdi_centers_json[item]["Lat"];
-            var lon = ngrdi_centers_json[item]["Lon"];
+            var lat = ngrdi_centers_json[item]["Lon"];
+            var lon = ngrdi_centers_json[item]["Lat"];
             var img_near = ngrdi_centers_json[item]["Nearest_image"];
             img_near = img_near.split(" ");
             var path_of_photos = localStorage.getItem("Save_Image_Path");
             path_of_photos.replace("\\","/");
 
             marker = new L.marker([lon,lat],{
-                title: 'markers_of_ngrdi',
+                title: ""+lon+","+lat,
                 icon: alert_indeces
             }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="ngrdi" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
 
@@ -2499,15 +2545,15 @@ jQuery('img[title="markers_of_gli"]').remove();
     
               /* CREATING MARKERS FOR vari CENTERS */
               for(var item in vari_centers_json) {
-                  var lat = vari_centers_json[item]["Lat"];
-                  var lon = vari_centers_json[item]["Lon"];
+                  var lat = vari_centers_json[item]["Lon"];
+                  var lon = vari_centers_json[item]["Lat"];
                   var img_near = vari_centers_json[item]["Nearest_image"];
                               img_near = img_near.split(" ");
             var path_of_photos = localStorage.getItem("Save_Image_Path");
             path_of_photos.replace("\\","/");
 
                   marker = new L.marker([lon,lat],{
-                      title: 'markers_of_vari',
+                    title: ""+lon+","+lat,
                       icon: alert_indeces
                     }).bindPopup('<img src='+path_of_photos+'/'+img_near[0]+'><div onfile="vari" its_item="'+item+'" class="remove_this">Remove</div>').addTo(map);
       

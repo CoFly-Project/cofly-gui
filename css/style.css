@@ -2101,3 +2101,7 @@ svg.leaflet-zoom-animated.comeinfront {
 svg.leaflet-zoom-animated.comeinfront g path:nth-child(1) {
   fill-opacity: 0;
 }
+
+img.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive.THISONEACTIVEMARKER {
+  opacity: 0.7;
+}
