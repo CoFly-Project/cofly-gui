@@ -685,7 +685,7 @@ jQuery(document).ready(function() {
             console.log(final_path);
             var executablePath = final_path;
             var running_on = path.resolve(__dirname);
-            var parameters = [running_on.replace(/\\/g, "/") + "/projects/" + localStorage.getItem("LoadProject").trim() + "/problematic_areas_points.json", running_on.replace(/\\/g, "/") + "/projects/" + localStorage.getItem("LoadProject").trim() + "/disabled_paths.geojson", jQuery('input#direction_show').val().slice(0, -1), jQuery('input#scanning_distance_now').val().slice(0, -1), 2, jQuery('input#drone_speed').val().replace("m/s", "")];
+            var parameters = [running_on.replace(/\\/g, "/") + "/projects/" + localStorage.getItem("LoadProject").trim() + "/problematic_areas_points.json", running_on.replace(/\\/g, "/") + "/projects/" + localStorage.getItem("LoadProject").trim() + "/disabled_paths.geojson", jQuery('input#direction_show').val().slice(0, -1), jQuery('input#hotpoint_diameter_now').val().slice(0, -1), 2, jQuery('input#drone_speed').val().replace("m/s", "")];
 
             console.log(parameters)
             child(executablePath, parameters, function(err, data) {
@@ -712,7 +712,7 @@ jQuery(document).ready(function() {
 
             }, 60000);
 
-        }, 1500);
+        }, 5000);
 
 
 
@@ -729,7 +729,49 @@ jQuery(document).ready(function() {
         const pathsb = require('path');
         var running_on = pathsb.resolve(__dirname);
         var path_of_json = running_on + '/projects/' + project_path.replace(" ", "") + '/' + project_path.replace(" ", "") + '/project/';
-        /* Keep All The Points */
+
+        /* Delete folders if exist from previous running */
+   
+        const directory = running_on + '/projects/' + localStorage.getItem("LoadProject").replace(" ", "") + '/weed_detection_markers_photo/';
+
+        
+        
+        fs.mkdir(directory, { recursive: true }, (err) => {
+            if (err) throw err;
+        });
+
+        var removeDir = function(dirPath) {
+            if (fs.existsSync(dirPath)) {
+                //return;
+            }
+        
+            var list = fs.readdirSync(dirPath);
+            for (var i = 0; i < list.length; i++) {
+                var filename = path.join(dirPath, list[i]);
+                var stat = fs.statSync(filename);
+        
+                if (filename == "." || filename == "..") {
+                    // do nothing for current and parent dir
+                } else if (stat.isDirectory()) {
+                    removeDir(filename);
+                } else {
+                    fs.unlinkSync(filename);
+                }
+            }
+        
+            fs.rmdirSync(dirPath);
+        };
+
+        removeDir(directory);
+
+        
+        fs.mkdir(directory, { recursive: true }, (err) => {
+            if (err) throw err;
+        });
+
+        if(jQuery('input[indeces_selection="gli_markers"]').is(':checked')){
+
+               /* Keep All The Points */
         var points_of_mission_two = [];
         fs.readFile(path_of_json + '/GLI.json', (err, data) => {
             if (err) throw err;
@@ -742,6 +784,11 @@ jQuery(document).ready(function() {
             });
 
         });
+
+        }
+
+     
+        if(jQuery('input[indeces_selection="nbgdi_markers"]').is(':checked')){
 
         fs.readFile(path_of_json + '/NGBDI.json', (err, data) => {
             if (err) throw err;
@@ -756,6 +803,10 @@ jQuery(document).ready(function() {
 
         });
 
+    }
+
+    if(jQuery('input[indeces_selection="ngrdi_markers"]').is(':checked')){
+
         fs.readFile(path_of_json + '/NGRDI.json', (err, data) => {
             if (err) throw err;
             let student = JSON.parse(data);
@@ -768,6 +819,9 @@ jQuery(document).ready(function() {
 
         });
 
+    }
+        
+    if(jQuery('input[indeces_selection="vari_markers"]').is(':checked')){
         fs.readFile(path_of_json + '/VARI.json', (err, data) => {
             if (err) throw err;
             let student = JSON.parse(data);
@@ -779,7 +833,7 @@ jQuery(document).ready(function() {
             });
 
         });
-
+    }
 
         setTimeout(function() {
             fs.writeFile(running_on.replace(/\\/g, "/") + "/projects/" + localStorage.getItem("LoadProject").trim() + "/problematic_areas_points.json", '{"type":"FeatureCollection","features":[{"type":"Feature","InitialPosition":[' + drone_general_longtitute + ',' + drone_general_latitude + '],"geometry":{"type":"Polygon","coordinates":[' + JSON.stringify(points_of_mission_two) + ']}}]}', function(err, result) {
@@ -1151,8 +1205,6 @@ jQuery(document).ready(function() {
             }, 1500);
         } catch (err) {
             console.log(err);
-            //console.log('There is not calculated path on the project');
-            //return false;
         }
 
     }
@@ -1242,9 +1294,7 @@ jQuery(document).ready(function() {
             console.log(JSON.stringify(get_file));
             fs.writeFileSync('./projects/' + project_path.replace(" ", "") + '/disabled_paths.geojson', JSON.stringify(get_file));
         }
-
         jQuery(this).remove();
-
 
     });
 
@@ -1967,10 +2017,56 @@ Lower right corner: 40.57197854729044, 22.99985538092048
     });
 
     //scan_completed(); // Enabled for debugging purposes
+    //debug
+    jQuery('i.fas.fa-circle').click(function(){
+        scan_completed();
+    });
     function scan_completed() {
-
-
         can_save_image = false;
+        // debug
+        mission_mode = 2;
+        if(mission_mode == 2){
+            var child = require('child_process').execFile;
+            
+            var running_on = path.resolve(__dirname).replace(/\\/g, "/");
+            var final_path = path.resolve(__dirname + '/third_party_plugins/weed_detection/weed_detection.bat').replace(/\\/g, "/");
+            console.log(final_path);
+            var executablePath = final_path;
+            var parameters = [path.resolve(__dirname + '/third_party_plugins/weed_detection/'), running_on + "/projects/" + localStorage.getItem("LoadProject").trim() + "/weed_detection_markers_photo/"];
+            toast({
+                title: "Starting...",
+                message: "Weed Detection module has started",
+                type: "success",
+                duration: 5000
+            });
+            console.log(parameters)
+            child(executablePath, parameters, function(err, data) {
+                console.log(err)
+                console.log(data.toString());
+                
+                if(err){
+                    toast({
+                        title: "Failed...",
+                        message: "something went wrong",
+                        type: "error",
+                        duration: 5000
+                    });
+                    //return;
+                }
+                
+                toast({
+                    title: "Detection Completed",
+                    message: "Navigate throught the markers",
+                    type: "success",
+                    duration: 5000
+                });
+
+
+            });
+            
+            return;
+        }
+        
         show_slide = true;
         //res.status(200).send('ok');
 
@@ -2344,11 +2440,11 @@ Lower right corner: 40.57197854729044, 22.99985538092048
 
             });
 
-
             jQuery('.portfolio-slides').slickLightbox({
                 itemSelector: 'a',
                 navigateByKeyboard: true
             });
+           
 
         } else {
             console.log('Not results eists');
@@ -2356,6 +2452,8 @@ Lower right corner: 40.57197854729044, 22.99985538092048
 
 
     });
+
+
 
     jQuery('#the_closer_of_slick').click(function() {
         jQuery(this).fadeOut();

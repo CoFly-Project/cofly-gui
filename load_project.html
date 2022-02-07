@@ -43,6 +43,12 @@
     <link rel="stylesheet" href="css/timeline.css">
     <link rel="stylesheet" href="css/datetimepicker.css">
 
+    <!-- Slick Library -->
+    
+    <link rel="stylesheet" href="css/slick.css">
+    <link rel="stylesheet" href="css/slick-theme.css">
+    <link rel="stylesheet" href="css/slick-lightbox.css">
+    
 
 
     
@@ -323,15 +329,24 @@ div#stiching_progress {
            minlength="4" maxlength="8" size="1">
                     </div>
     <hr class="my-3 white">
-                    <div style="width: 100%">
-                        <div class="slider_title"><i class="fas fa-ruler-horizontal"></i>
-                            <label>Scanning Distance</label>
-                        </div>
-                        <input type="range" class="input-range--custom scanning_distance" min="0" max="20">
-                        <input type="text" id="scanning_distance_now" name="name" class="input_slider_shower"
-           minlength="4" maxlength="8" size="1">
-                    </div>
-                    <hr class="my-3 white">
+    <div style="width: 100%">
+        <div class="slider_title"><i class="fas fa-ruler-horizontal"></i>
+            <label>Scanning Distance</label>
+        </div>
+        <input type="range" class="input-range--custom scanning_distance" min="0" max="20">
+        <input type="text" id="scanning_distance_now" name="name" class="input_slider_shower"
+minlength="4" maxlength="8" size="1">
+    </div>
+    <hr class="my-3 white">
+    <div style="width: 100%">
+        <div class="slider_title"><i class="fas fa-circle"></i>
+            <label>Hotpoint Diameter</label>
+        </div>
+        <input type="range"  class="input-range--custom hotpoint_diameter" min="5" max="20">
+        <input type="text" id="hotpoint_diameter_now" name="name" class="input_slider_shower"
+minlength="4" maxlength="8" size="1">
+    </div>
+    <hr class="my-3 white">
                     <div style="width: 100%">
                        
                         
@@ -614,7 +629,7 @@ jQuery("div#timeline_div").load("scan_timeline.html");
                                                 </div>
                                             </div>
 
-                                            <div style="display:none;" class="section_two_actions_button"><span class="scan_info_title">Select Field Action:</span><ul class="add_new_action_calendar"><li is_enabled="0"><img src="./img/watering.png"></li><li is_enabled="0"><img src="./img/watering.png"></li><li is_enabled="0"><img src="./img/watering.png"></li></ul></div>
+                                            <div style="display:none;" class="section_two_actions_button"><span class="scan_info_title">Select Field Action:</span><ul class="add_new_action_calendar"><li is_enabled="0"><img src="./img/spray.png"></li><li is_enabled="0"><img src="./img/tractor.png"></li><li is_enabled="0"><img src="./img/watering.png"></li></ul></div>
                                             <div style="display:none;" class="section_two_actions_comments"><span class="scan_info_title">Write Extra Comments:</span><textarea placeholder="Comments" id="add_extra_field_comments" rows="4" cols="50"></textarea></div>
 
                                             
@@ -713,18 +728,30 @@ jQuery("div#timeline_div").load("scan_timeline.html");
 
                 <div style="display:none;"class="button_full_rgb_vls" index="ExG_stiched">ExG</div>
                 <div style="display:none;" class="button_full_rgb_vls" index="ExG-ExR_stiched">ExG-ExR</div>
-                <div class="button_full_rgb_vls" index="GLI.png">GLI <section class="model-7">
-                    <div class="checkbox">
-                      <input indeces_selection="gli_markers" type="checkbox"/>
-                      <label></label>
-                    </div>
-                  </section></div> 
-                <div class="button_full_rgb_vls" index="NGBDI.png">NGBDI<section class="model-7">
-                    <div class="checkbox">
-                      <input indeces_selection="nbgdi_markers" type="checkbox">
-                      <label></label>
-                    </div>
-                  </section></div> 
+                <div class="button_full_rgb_vls" index="GLI.png">GLI 
+                
+
+                    <section class="model-7">
+                        <div class="checkbox">
+                          <input indeces_selection="gli_markers" type="checkbox"/>
+                          <label></label>
+                        </div>
+                      </section>
+
+                </div> 
+               
+                <div class="button_full_rgb_vls" index="NGBDI.png">NGBDI
+
+
+                    <section class="model-7">
+                        <div class="checkbox">
+                          <input indeces_selection="nbgdi_markers" type="checkbox">
+                          <label></label>
+                        </div>
+                      </section>
+
+                </div> 
+               
                 <div class="button_full_rgb_vls" index="NGRDI.png">NGRDI<section class="model-7">
                     <div class="checkbox">
                       <input indeces_selection="ngrdi_markers" type="checkbox">
@@ -774,7 +801,7 @@ jQuery("div#timeline_div").load("scan_timeline.html");
                 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; padding: 60px 0;">
                   <div class="card__circle">
                     <div class="folder">
-                      <div class="folder__bg"><img width="100%" src="https://cdn.dribbble.com/users/27903/screenshots/3465543/loader2.gif"></div>
+                      <div class="folder__bg"><img width="100%" src="./img/loader2.gif"></div>
                       <div style="display:none;" class="folder__page3"></div>
                       <div style="display:none;" class="folder__page2"></div>
                       <div style="display:none;" class="folder__page1"></div>
@@ -818,6 +845,14 @@ jQuery("div#timeline_div").load("scan_timeline.html");
 
 </div>
 
+
+<!-- Slick Slider & LightBox for detection images -->
+<div class="hide_it" id="the_closer_of_slick">X</div>
+<div  id="detection_carousel" style="position: absolute;bottom: 0;width: 100%;background: rgba(0,0,0,.8);" class="portfolio-slides hide_it">
+    
+    
+  </div>
+
 <!-- End Navbar -->
         <!-- Header -->
 
@@ -836,8 +871,10 @@ jQuery("div#timeline_div").load("scan_timeline.html");
     
     
 
+    <!-- Slick Slider Portfolios -->
     
-
+    <script src="js/lib/slick.min.js"></script>
+    <script src="js/lib/slick-lightbox.js"></script>
 
 
     <script src="js/reveal.js"></script>

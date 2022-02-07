@@ -75,6 +75,18 @@ jQuery(document).ready(function() {
         });
     }
 
+    jQuery('#hotpoint_diameter_now').val(5+'m');
+    jQuery('input.hotpoint_diameter').val(5);
+    if(jQuery('input.scanning_distance').length > 0){
+        document.querySelector('input.hotpoint_diameter').addEventListener('input', function() {
+            var percent = 100 * (this.value - this.min) / (this.max - this.min) + '%';
+            jQuery('#hotpoint_diameter_now').val(this.value + 'm');
+            //  this.setAttribute('value', this.value);
+            //  this.setAttribute('title', this.value);
+            this.style.backgroundImage = `linear-gradient( to right, ${fillColor}, ${fillColor} ${percent}, ${emptyColor} ${percent})`;
+        });
+    }
+
 
 //
 

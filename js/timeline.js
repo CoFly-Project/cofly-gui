@@ -44,16 +44,16 @@ function load_field_actions(){
 			//console.log(read_action[x]);
 			if(x == 0){
 				if(read_action[x] == 0){
-					build_actions = build_actions + '<li><img src="./img/watering.png"></li>';
+					build_actions = build_actions + '<li><img src="./img/spray.png"></li>';
 				}else{
-					build_actions = build_actions + '<li><img src="./img/watering_active.png"></li>';
+					build_actions = build_actions + '<li><img src="./img/spray_active.png"></li>';
 				}
 			}else if(x == 1){
 
 				if(read_action[x] == 0){
-					build_actions = build_actions + '<li><img src="./img/watering.png"></li>';
+					build_actions = build_actions + '<li><img src="./img/tractor.png"></li>';
 				}else{
-					build_actions = build_actions +'<li><img src="./img/watering_active.png"></li>';
+					build_actions = build_actions +'<li><img src="./img/tractor_active.png"></li>';
 				}
 
 			}else if(x == 2){
