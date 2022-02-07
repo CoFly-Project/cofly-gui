@@ -120,7 +120,10 @@ Based on VIs maps, we identify the problematic areas of the under study field in
 Hot-Poin Mission focuses on the detected points of interest for each VI. Again, the UAV path planning is extracted by the  _[Waypoint-Trajectory-Planning](https://github.com/CoFly-Project/Waypoint-Trajectory-Planning)_ module. During this mission, visual footage from lower altitudes and different camera angles is captured aiming to visually detect crop health deterioration sources, such as weed plants, in order to enable site-specific treatment.
 
 ## Weed-Detection
-<img src="https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/Weed_Detection.gif?raw=true" width="700" />
+
+ <p align="center">
+  <img src="https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/Weed_Detection.gif?raw=true" width="700" />
+</p>
 
 &nbsp;
 
@@ -128,10 +131,10 @@ The developed operation of ```CoFly-GUI``` is capable of semantically segmenting
 
 ## Crop Calendar Logging
 
-<img src="https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/Calendar_.gif?raw=true" width="700" />
-<!-- <p align="center">
-  <img src="https://user-images.githubusercontent.com/80779522/150544979-ba21fb0f-dde2-4b15-ab2f-f3a0db514e6b.gif" width="700" />
-</p> -->
+
+ <p align="center">
+  <img src="https://github.com/CoFly-Project/cofly-gui/blob/master/readme_images/Calendar_.gif?raw=true" width="700" />
+</p>
 
 &nbsp;
 
